@@ -547,10 +547,7 @@ function renderCloset() {
   const grid = document.getElementById('closet-grid');
   grid.innerHTML = filtered.map(item => `
     <div class="closet-item" title="${item.name} — ${item.brand}">
-      <div class="closet-item-placeholder" style="background:${item.color}15;">
-        <span>${item.emoji}</span>
-        <span style="font-size:10px; color:var(--muted); margin-top:4px;">${item.sub}</span>
-      </div>
+      <img class="closet-item-img" src="images/closet/${item.id}.jpg" alt="${item.name}" loading="lazy" />
       <div class="closet-item-info">
         <div class="closet-item-name">${item.name}</div>
         <div class="closet-item-brand">${item.brand}</div>
@@ -604,9 +601,7 @@ function renderCarousel() {
               if (!item) return '';
               return `
                 <div class="outfit-item-card">
-                  <div class="outfit-item-placeholder" style="background:${item.color}15;">
-                    <span>${item.emoji}</span>
-                  </div>
+                  <img class="outfit-item-img" src="images/closet/${item.id}.jpg" alt="${item.name}" loading="lazy" />
                   <div class="outfit-item-label">
                     <div class="outfit-item-slot">${item.category}</div>
                     ${item.name}
