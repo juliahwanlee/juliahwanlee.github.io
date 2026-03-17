@@ -5,441 +5,335 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ClosetAI — AI Stylist From Your Closet</title>
   <style>
-    /* ── RESET & BASE ── */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --blue: #007acc;
-      --blue-dark: #005fa3;
-      --blue-light: #eaf4fb;
-      --navy: #1a1a2e;
-      --green: #2e7d32;
-      --text: #333;
-      --muted: #888;
-      --border: #e4e4e4;
-      --bg: #f5f5f5;
-      --white: #fff;
-      --radius: 8px;
+      --blue: #007acc; --blue-dark: #005fa3; --blue-light: #eaf4fb;
+      --navy: #1a1a2e; --green: #2e7d32; --text: #333; --muted: #888;
+      --border: #e4e4e4; --bg: #f5f5f5; --white: #fff; --radius: 10px;
     }
-    body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      font-size: 15px;
-    }
-    input, button, select, textarea { font-family: inherit; }
+    body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; overflow-x: hidden; }
+    input, button, select { font-family: inherit; }
+    .screen { display: none; min-height: 100vh; flex-direction: column; }
+    .screen.active { display: flex; }
 
-    /* ── SCREENS ── */
-    .screen { display: none; min-height: 100vh; }
-    .screen.active { display: flex; flex-direction: column; }
-
-    /* ── APP HEADER ── */
+    /* APP HEADER */
     .app-header {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 20px; height: 52px; display: flex; align-items: center;
+      justify-content: space-between; flex-shrink: 0; position: sticky; top: 0; z-index: 50;
     }
-    .logo { font-size: 18px; font-weight: 700; color: var(--navy); }
+    .logo { font-size: 17px; font-weight: 700; color: var(--navy); letter-spacing: -0.3px; }
     .logo span { color: var(--blue); }
-    .header-nav { display: flex; align-items: center; gap: 8px; }
-    .nav-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 13px;
-      cursor: pointer;
-      padding: 6px 10px;
-      border-radius: 4px;
-      transition: color 0.2s;
-    }
-    .nav-btn:hover { color: var(--blue); }
-    .nav-btn.active { color: var(--blue); font-weight: 600; }
+    .header-nav { display: flex; gap: 4px; }
+    .nav-btn { background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; padding: 6px 10px; border-radius: 6px; transition: all 0.15s; }
+    .nav-btn:hover, .nav-btn.active { color: var(--blue); background: var(--blue-light); }
 
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500;
-      cursor: pointer; border: none; transition: background 0.2s, transform 0.1s;
-      text-decoration: none; white-space: nowrap;
-    }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: var(--blue); color: var(--white); }
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; white-space: nowrap; }
+    .btn-primary { background: var(--blue); color: #fff; }
     .btn-primary:hover { background: var(--blue-dark); }
-    .btn-secondary { background: var(--white); color: var(--blue); border: 1px solid var(--blue); }
+    .btn-secondary { background: var(--white); color: var(--blue); border: 1.5px solid var(--blue); }
     .btn-secondary:hover { background: var(--blue-light); }
     .btn-ghost { background: none; color: var(--muted); border: 1px solid var(--border); }
-    .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
-    .btn-lg { padding: 13px 28px; font-size: 15px; }
+    .btn-lg { padding: 13px 28px; font-size: 15px; border-radius: 10px; }
     .btn-full { width: 100%; }
-    .btn-oauth {
-      background: var(--white); border: 1px solid var(--border); color: var(--text);
-      padding: 11px 20px; border-radius: 6px; font-size: 14px; font-weight: 500;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      gap: 10px; transition: box-shadow 0.2s;
-    }
+    .btn-oauth { background: var(--white); border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: box-shadow 0.2s; width: 100%; }
     .btn-oauth:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .btn-oauth.apple { background: #000; color: #fff; border-color: #000; }
 
-    /* ── FORMS ── */
+    /* FORMS */
     .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .form-group input {
-      width: 100%; padding: 10px 12px; border: 1px solid var(--border);
-      border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s;
-    }
+    .form-group label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
     .form-group input:focus { border-color: var(--blue); }
-
-    /* ── DIVIDER ── */
     .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: var(--muted); font-size: 12px; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .tag { display: inline-block; background: var(--blue-light); color: var(--blue); font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 500; }
 
-    /* ── CARDS ── */
-    .card {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px;
-    }
-
-    /* ── TAGS ── */
-    .tag {
-      display: inline-block; background: var(--blue-light); color: var(--blue);
-      font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 500;
-    }
-
-    /* ───────────────────────────────────────────
-       SCREEN 1: AUTH
-    ─────────────────────────────────────────── */
-    #screen-auth {
-      background: linear-gradient(135deg, #007acc 0%, #005fa3 100%);
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .auth-box {
-      background: var(--white);
-      border-radius: 12px;
-      padding: 36px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-    }
+    /* ── SCREEN 1: AUTH ── */
+    #screen-auth { background: linear-gradient(150deg, #1a1a2e 0%, #007acc 100%); align-items: center; justify-content: center; padding: 24px; }
+    .auth-box { background: var(--white); border-radius: 16px; padding: 36px; width: 100%; max-width: 400px; box-shadow: 0 24px 64px rgba(0,0,0,0.2); }
     .auth-logo { text-align: center; margin-bottom: 24px; }
-    .auth-logo .logo-big { font-size: 24px; font-weight: 700; color: var(--navy); }
+    .auth-logo .logo-big { font-size: 26px; font-weight: 800; color: var(--navy); }
     .auth-logo .logo-big span { color: var(--blue); }
     .auth-logo p { font-size: 13px; color: var(--muted); margin-top: 4px; }
     .auth-tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
-    .auth-tab {
-      flex: 1; text-align: center; padding: 10px; font-size: 14px; font-weight: 500;
-      cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent;
-      margin-bottom: -2px; transition: color 0.2s;
-    }
+    .auth-tab { flex: 1; text-align: center; padding: 10px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.2s; }
     .auth-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
 
-    /* ───────────────────────────────────────────
-       SCREEN 2: POST-LOGIN BANNER
-    ─────────────────────────────────────────── */
+    /* ── SCREEN 2: CONNECT ── */
     #screen-connect { background: var(--white); }
-    .connect-hero {
-      background: linear-gradient(135deg, #007acc 0%, #005fa3 100%);
-      color: white; padding: 60px 24px; text-align: center;
-    }
-    .connect-hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+    .connect-hero { background: linear-gradient(150deg, #1a1a2e 0%, #007acc 100%); color: white; padding: 60px 24px; text-align: center; }
+    .connect-hero h1 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
     .connect-hero p { font-size: 15px; opacity: 0.88; max-width: 480px; margin: 0 auto; line-height: 1.6; }
-    .connect-body { max-width: 600px; margin: 40px auto; padding: 0 24px; }
-    .connect-banner {
-      border: 2px solid var(--blue); border-radius: var(--radius);
-      padding: 24px; background: var(--blue-light); margin-bottom: 28px;
-    }
-    .connect-banner h3 { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
-    .connect-banner p { font-size: 13px; color: #555; line-height: 1.55; margin-bottom: 16px; }
-    .connect-banner-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .connect-body { max-width: 580px; margin: 36px auto; padding: 0 24px; }
+    .connect-banner { border: 2px solid var(--blue); border-radius: 12px; padding: 24px; background: var(--blue-light); margin-bottom: 24px; }
+    .connect-banner h3 { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+    .connect-banner p { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 16px; }
+    .connect-btns { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    /* ───────────────────────────────────────────
-       SCREEN 3: BRAND SELECTION
-    ─────────────────────────────────────────── */
+    /* ── SCREEN 3: BRAND SELECTION ── */
     #screen-brands { background: var(--white); }
-    .setup-header {
-      padding: 32px 24px 20px;
-      max-width: 760px; margin: 0 auto; width: 100%;
-    }
-    .setup-header .step-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .setup-header { padding: 28px 20px 16px; max-width: 760px; margin: 0 auto; width: 100%; }
+    .step-label { font-size: 11px; color: var(--blue); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
     .setup-header h1 { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
     .setup-header p { font-size: 14px; color: var(--muted); }
-    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin: 16px 0 0; }
-    .progress-bar-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.3s; }
-    .brand-search-wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 16px; }
-    .brand-search-wrap input {
-      width: 100%; padding: 10px 14px; border: 1px solid var(--border);
-      border-radius: 6px; font-size: 14px; outline: none;
-    }
+    .progress-bar { height: 3px; background: var(--border); border-radius: 2px; margin: 14px 0 0; }
+    .progress-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.3s; }
+    .brand-search-wrap { max-width: 760px; margin: 0 auto; padding: 0 20px 14px; }
+    .brand-search-wrap input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
     .brand-search-wrap input:focus { border-color: var(--blue); }
-    .brand-group { max-width: 760px; margin: 0 auto; padding: 0 24px 24px; }
-    .brand-group-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
-    .brand-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
-    .brand-tile {
-      display: flex; align-items: center; gap: 10px;
-      border: 1.5px solid var(--border); border-radius: 8px;
-      padding: 10px 14px; cursor: pointer; transition: all 0.15s;
-      background: var(--white); min-width: 140px;
-    }
+    .brand-group { max-width: 760px; margin: 0 auto; padding: 0 20px 80px; }
+    .brand-group-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 20px; }
+    .brand-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .brand-tile { display: flex; align-items: center; gap: 9px; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 13px; cursor: pointer; transition: all 0.15s; background: var(--white); min-width: 130px; }
     .brand-tile:hover { border-color: var(--blue); background: var(--blue-light); }
     .brand-tile.selected { border-color: var(--blue); background: var(--blue-light); }
     .brand-tile.selected .brand-check { opacity: 1; }
-    .brand-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; color: white; flex-shrink: 0;
-    }
-    .brand-name { font-size: 13px; font-weight: 500; }
-    .brand-check { opacity: 0; color: var(--blue); font-size: 14px; margin-left: auto; transition: opacity 0.15s; }
-    .setup-footer {
-      position: sticky; bottom: 0; background: var(--white);
-      border-top: 1px solid var(--border); padding: 14px 24px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    .brand-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; flex-shrink: 0; }
+    .brand-name { font-size: 12px; font-weight: 500; }
+    .brand-check { opacity: 0; color: var(--blue); font-size: 13px; margin-left: auto; }
+    .setup-footer { position: sticky; bottom: 0; background: var(--white); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
     .selected-count { font-size: 13px; color: var(--muted); }
     .selected-count strong { color: var(--blue); }
 
-    /* ───────────────────────────────────────────
-       SCREEN 4: CONNECTING
-    ─────────────────────────────────────────── */
-    #screen-connecting {
-      align-items: center; justify-content: center;
-      background: var(--white); padding: 40px 24px;
-    }
-    .connecting-box { text-align: center; max-width: 400px; }
+    /* ── SCREEN 4: CONNECTING ── */
+    #screen-connecting { align-items: center; justify-content: center; background: var(--white); padding: 40px 24px; }
+    .connecting-box { text-align: center; max-width: 380px; width: 100%; }
     .connecting-box h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--navy); }
-    .connecting-box p { font-size: 14px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
-    .retailer-status-list { text-align: left; width: 100%; margin-bottom: 32px; }
-    .retailer-status {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 0; border-bottom: 1px solid var(--border);
-    }
+    .connecting-box p { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+    .retailer-status-list { text-align: left; width: 100%; margin-bottom: 28px; }
+    .retailer-status { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .retailer-status:last-child { border-bottom: none; }
-    .retailer-status .brand-avatar { width: 36px; height: 36px; }
     .retailer-status-text { flex: 1; }
-    .retailer-status-text .name { font-size: 14px; font-weight: 500; }
-    .retailer-status-text .status-line { font-size: 12px; color: var(--muted); }
-    .status-icon { font-size: 18px; }
-    .spinner {
-      width: 20px; height: 20px; border: 2px solid var(--border);
-      border-top-color: var(--blue); border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+    .retailer-status-text .rname { font-size: 14px; font-weight: 500; }
+    .retailer-status-text .rline { font-size: 12px; color: var(--muted); }
+    .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ───────────────────────────────────────────
-       SCREEN 5: CLOSET
-    ─────────────────────────────────────────── */
+    /* ── SCREEN 5: CLOSET ── */
     #screen-closet { background: var(--bg); }
-    .closet-header {
-      background: var(--white); border-bottom: 1px solid var(--border);
-      padding: 20px 24px 0; position: sticky; top: 56px; z-index: 40;
-    }
-    .closet-header-top {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
-    }
+    .closet-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 20px 0; position: sticky; top: 52px; z-index: 40; }
+    .closet-header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .closet-header-top h2 { font-size: 18px; font-weight: 700; color: var(--navy); }
-    .closet-header-top .item-count { font-size: 13px; color: var(--muted); }
-    .category-tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 0; }
-    .cat-tab {
-      padding: 8px 14px; font-size: 13px; font-weight: 500; color: var(--muted);
-      border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap;
-      transition: color 0.15s; background: none; border-top: none; border-left: none; border-right: none;
-    }
+    .closet-header-top .item-count { font-size: 12px; color: var(--muted); background: var(--bg); padding: 3px 9px; border-radius: 10px; }
+    .cat-tabs { display: flex; gap: 0; overflow-x: auto; }
+    .cat-tab { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none; transition: color 0.15s; }
     .cat-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
-    .closet-body { max-width: 900px; margin: 0 auto; padding: 24px; }
-    .closet-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px;
-    }
-    .closet-item {
-      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
-      overflow: hidden; cursor: pointer; transition: box-shadow 0.2s;
-    }
-    .closet-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-    .item-image {
-      width: 100%; aspect-ratio: 3/4; display: flex; align-items: center;
-      justify-content: center; font-size: 36px; background: #f8f8f8;
-    }
-    .item-info { padding: 10px; }
-    .item-info .item-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .item-info .item-brand { font-size: 11px; color: var(--muted); }
-    .item-color-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); margin-left: 4px; vertical-align: middle; }
-    .add-item-btn {
-      background: var(--white); border: 2px dashed var(--border); border-radius: var(--radius);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 6px; cursor: pointer; aspect-ratio: 3/4; color: var(--muted);
-      font-size: 13px; transition: border-color 0.2s;
-    }
-    .add-item-btn:hover { border-color: var(--blue); color: var(--blue); }
-    .add-item-btn .plus { font-size: 24px; }
-    .generate-cta {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--white); border-top: 1px solid var(--border);
-      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    }
+    .closet-body { padding: 16px 16px 100px; }
+    .closet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .closet-item { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.2s; }
+    .closet-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .item-photo { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+    .item-photo-fallback { width: 100%; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+    .item-info { padding: 9px 10px; }
+    .item-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .item-brand { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .color-dot { width: 9px; height: 9px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
+    .add-tile { background: var(--white); border: 2px dashed var(--border); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; aspect-ratio: 3/4; color: var(--muted); font-size: 12px; transition: border-color 0.2s; }
+    .add-tile:hover { border-color: var(--blue); color: var(--blue); }
+    .add-tile .plus { font-size: 22px; }
+    .generate-cta { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .generate-cta p { font-size: 13px; color: var(--muted); }
     .generate-cta strong { color: var(--text); }
 
-    /* ───────────────────────────────────────────
-       SCREEN 6: OUTFIT GENERATION (CONTEXT)
-    ─────────────────────────────────────────── */
+    /* ── SCREEN 6: GENERATE ── */
     #screen-generate { background: var(--bg); }
-    .generate-body { max-width: 560px; margin: 0 auto; padding: 32px 24px 120px; }
-    .generate-body h2 { font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
-    .generate-body .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
-    .context-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
-    .context-card h3 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
-    .weather-display { display: flex; align-items: center; gap: 16px; }
-    .weather-icon { font-size: 40px; }
-    .weather-info .temp { font-size: 28px; font-weight: 700; color: var(--navy); }
-    .weather-info .condition { font-size: 13px; color: var(--muted); }
-    .weather-info .location { font-size: 12px; color: var(--muted); }
+    .generate-body { max-width: 540px; margin: 0 auto; padding: 28px 20px 100px; }
+    .generate-body h2 { font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
+    .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .ctx-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+    .ctx-card h3 { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; }
+    .weather-row { display: flex; align-items: center; gap: 16px; }
+    .weather-icon { font-size: 38px; }
+    .weather-temp { font-size: 28px; font-weight: 700; color: var(--navy); }
+    .weather-sub { font-size: 12px; color: var(--muted); }
     .occasion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .occasion-tile {
-      border: 1.5px solid var(--border); border-radius: 6px; padding: 12px 8px;
-      text-align: center; cursor: pointer; transition: all 0.15s;
-    }
-    .occasion-tile:hover { border-color: var(--blue); background: var(--blue-light); }
-    .occasion-tile.selected { border-color: var(--blue); background: var(--blue-light); }
-    .occasion-tile .occ-icon { font-size: 22px; margin-bottom: 4px; }
-    .occasion-tile .occ-label { font-size: 12px; font-weight: 500; color: var(--text); }
+    .occ-tile { border: 1.5px solid var(--border); border-radius: 8px; padding: 12px 6px; text-align: center; cursor: pointer; transition: all 0.15s; }
+    .occ-tile:hover { border-color: var(--blue); background: var(--blue-light); }
+    .occ-tile.selected { border-color: var(--blue); background: var(--blue-light); }
+    .occ-icon { font-size: 22px; margin-bottom: 4px; }
+    .occ-label { font-size: 12px; font-weight: 500; }
     .style-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .style-chip {
-      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
-      border: 1.5px solid var(--border); cursor: pointer; transition: all 0.15s; background: var(--white);
-    }
-    .style-chip:hover { border-color: var(--blue); }
-    .style-chip.selected { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
-    .generate-footer {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--white); border-top: 1px solid var(--border);
-      padding: 14px 24px;
-    }
+    .s-chip { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.15s; background: var(--white); }
+    .s-chip.selected { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+    .gen-footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 12px 20px; }
 
-    /* ───────────────────────────────────────────
-       SCREEN 7: LOADING
-    ─────────────────────────────────────────── */
-    #screen-loading {
-      background: var(--white); align-items: center; justify-content: center; flex-direction: column;
-    }
-    .loading-content { text-align: center; }
-    .loading-spinner {
-      width: 56px; height: 56px; border: 4px solid var(--border);
-      border-top-color: var(--blue); border-radius: 50%;
-      animation: spin 1s linear infinite; margin: 0 auto 24px;
-    }
-    .loading-content h2 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
-    .loading-content p { font-size: 14px; color: var(--muted); }
-    .loading-steps { margin-top: 28px; text-align: left; }
-    .loading-step { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; color: var(--muted); }
-    .loading-step.done { color: var(--green); }
-    .loading-step.active { color: var(--blue); font-weight: 500; }
-    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
-    .loading-step.done .step-dot { background: var(--green); }
-    .loading-step.active .step-dot { background: var(--blue); }
+    /* ── SCREEN 7: LOADING ── */
+    #screen-loading { background: var(--white); align-items: center; justify-content: center; }
+    .loading-box { text-align: center; max-width: 320px; padding: 0 24px; }
+    .big-spinner { width: 56px; height: 56px; border: 4px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 24px; }
+    .loading-box h2 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .loading-box p { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+    .load-steps { text-align: left; }
+    .load-step { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 13px; color: var(--border); }
+    .load-step.done { color: var(--green); }
+    .load-step.curr { color: var(--blue); font-weight: 500; }
+    .step-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
-    /* ───────────────────────────────────────────
-       SCREEN 8: OUTFIT RESULTS
-    ─────────────────────────────────────────── */
+    /* ── SCREEN 8: OUTFITS (horizontal swipe) ── */
     #screen-outfits { background: var(--bg); }
-    .outfits-header {
-      background: var(--white); border-bottom: 1px solid var(--border);
-      padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .outfits-header h2 { font-size: 18px; font-weight: 700; color: var(--navy); }
-    .outfits-header .regen-btn {
-      background: none; border: 1px solid var(--border); color: var(--muted);
-      padding: 6px 12px; border-radius: 5px; font-size: 13px; cursor: pointer; transition: all 0.15s;
-    }
-    .outfits-header .regen-btn:hover { border-color: var(--blue); color: var(--blue); }
-    .outfit-tabs { display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto; background: var(--white); border-bottom: 1px solid var(--border); }
-    .outfit-tab {
-      padding: 8px 16px; border-radius: 6px 6px 0 0; font-size: 13px; font-weight: 500;
-      cursor: pointer; color: var(--muted); border: 1px solid transparent;
-      border-bottom: none; white-space: nowrap; background: none; transition: all 0.15s;
-    }
-    .outfit-tab.active { color: var(--blue); border-color: var(--border); border-bottom: 1px solid var(--white); background: var(--white); margin-bottom: -1px; }
-    .outfits-body { max-width: 700px; margin: 0 auto; padding: 24px 24px 100px; }
-    .outfit-panel { display: none; }
-    .outfit-panel.active { display: block; }
-    .outfit-palette-bar { display: flex; gap: 0; border-radius: 8px; overflow: hidden; margin-bottom: 20px; height: 48px; }
-    .palette-swatch { flex: 1; }
-    .palette-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .palette-name { font-size: 16px; font-weight: 700; color: var(--navy); }
-    .occasion-badge { font-size: 12px; padding: 3px 10px; border-radius: 10px; background: var(--blue-light); color: var(--blue); font-weight: 500; }
-    .styling-note { font-size: 13px; color: #555; line-height: 1.6; padding: 14px; background: var(--white); border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0; margin-bottom: 20px; font-style: italic; }
-    .outfit-slots { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .outfit-slot {
-      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
-      display: flex; align-items: center; gap: 14px; padding: 12px 14px;
-    }
-    .slot-icon { font-size: 28px; width: 44px; height: 44px; background: var(--bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .slot-info { flex: 1; }
-    .slot-type { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-    .slot-item { font-size: 14px; font-weight: 500; color: var(--text); }
-    .slot-brand { font-size: 12px; color: var(--muted); }
-    .slot-color { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
-    .slot-suggestion {
-      background: #fff9f0; border: 1px dashed #f0a040; border-radius: var(--radius);
-      display: flex; align-items: center; gap: 14px; padding: 12px 14px;
-    }
-    .slot-suggestion .slot-type { color: #b36000; }
-    .slot-suggestion .slot-item { color: #b36000; }
-    .slot-suggestion .shop-btn {
-      font-size: 12px; padding: 4px 10px; background: #f0a040; color: white;
-      border: none; border-radius: 4px; cursor: pointer; font-weight: 500; white-space: nowrap;
-    }
-    .suggestion-section { margin-top: 20px; }
-    .suggestion-section h3 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
-    .suggestion-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .suggestion-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
-    .suggestion-card .s-image { font-size: 28px; margin-bottom: 8px; }
-    .suggestion-card .s-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-    .suggestion-card .s-brand { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
-    .suggestion-card .s-price { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
-    .suggestion-card .s-btn { width: 100%; text-align: center; }
-    .wishlist-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px; }
 
-    /* RESPONSIVE */
+    .outfits-topbar {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .outfits-topbar h2 { font-size: 17px; font-weight: 700; color: var(--navy); }
+    .regen-btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .regen-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* CAROUSEL */
+    .carousel-wrapper { flex: 1; position: relative; overflow: hidden; }
+    .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .outfit-slide {
+      flex-shrink: 0;
+      width: 100%;
+      height: 100%;
+      scroll-snap-align: start;
+      overflow-y: auto;
+      padding-bottom: 80px;
+    }
+
+    /* Outfit slide content */
+    .outfit-view-toggle {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      background: var(--white); position: sticky; top: 0; z-index: 30;
+    }
+    .view-tab {
+      flex: 1; padding: 11px; text-align: center; font-size: 13px; font-weight: 500;
+      color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent;
+      background: none; border-top: none; border-left: none; border-right: none; transition: all 0.15s;
+    }
+    .view-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+    /* FLAT LAY VIEW */
+    .flatlay-view, .avatar-view { display: none; }
+    .flatlay-view.active, .avatar-view.active { display: block; }
+
+    .flatlay-img-wrap {
+      position: relative; width: 100%; background: #f8f6f3;
+    }
+    .flatlay-img-wrap img { width: 100%; max-height: 380px; object-fit: cover; display: block; }
+    .flatlay-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.55));
+      padding: 32px 16px 16px; color: #fff;
+    }
+    .flatlay-caption h3 { font-size: 18px; font-weight: 700; margin-bottom: 3px; }
+    .flatlay-caption p { font-size: 12px; opacity: 0.85; }
+
+    /* CSS flat-lay composite (for outfits without a photo) */
+    .composite-flatlay {
+      background: #f5f2ed; padding: 24px 16px; display: grid;
+      grid-template-columns: repeat(3, 1fr); gap: 10px; min-height: 280px;
+    }
+    .composite-item {
+      background: var(--white); border-radius: 8px; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .composite-item img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+    .composite-item-fallback { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+    .composite-label { font-size: 10px; color: var(--muted); padding: 4px 6px; text-align: center; }
+
+    .outfit-meta-bar { padding: 14px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .palette-dots { display: flex; gap: 5px; align-items: center; }
+    .palette-dot { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .outfit-meta-right { text-align: right; }
+    .outfit-meta-right .occ-tag { font-size: 11px; padding: 3px 9px; border-radius: 10px; background: var(--blue-light); color: var(--blue); font-weight: 600; }
+    .palette-name-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    .styling-note { font-size: 13px; color: #555; line-height: 1.65; padding: 14px 16px; background: var(--white); border-left: 3px solid var(--blue); margin: 12px 16px; border-radius: 0 8px 8px 0; font-style: italic; }
+
+    /* OUTFIT SLOTS */
+    .slots-section { padding: 12px 16px; }
+    .slots-section h4 { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+    .slot-row { display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--white); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); }
+    .slot-row img { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+    .slot-row .slot-emoji { width: 48px; height: 48px; border-radius: 6px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .slot-info-text { flex: 1; }
+    .slot-type-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .slot-item-name { font-size: 13px; font-weight: 600; }
+    .slot-brand-name { font-size: 11px; color: var(--muted); }
+    .slot-color-swatch { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid rgba(0,0,0,0.1); flex-shrink: 0; }
+
+    /* GAP slot */
+    .slot-row.gap { background: #fff9f0; border-color: #f0a040; }
+    .slot-row.gap .slot-type-label { color: #b36000; }
+    .slot-row.gap .slot-item-name { color: #b36000; }
+    .gap-shop-btn { font-size: 11px; padding: 4px 10px; background: #f0a040; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+
+    /* SUGGESTIONS */
+    .suggestions-section { padding: 0 16px 16px; }
+    .suggestions-section h4 { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+    .suggestion-row { display: flex; gap: 10px; }
+    .sug-card { flex: 1; background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+    .sug-img { width: 100%; aspect-ratio: 1; border-radius: 6px; object-fit: cover; margin-bottom: 8px; }
+    .sug-img-fallback { width: 100%; aspect-ratio: 1; background: var(--bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 8px; }
+    .sug-name { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+    .sug-brand { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .sug-price { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+    .sug-tag { font-size: 10px; display: inline-block; background: var(--blue-light); color: var(--blue); padding: 2px 7px; border-radius: 3px; margin-bottom: 8px; }
+    .sug-btn { width: 100%; padding: 7px; background: var(--blue); color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; }
+
+    /* AVATAR VIEW */
+    .avatar-view-content { padding: 20px 16px; }
+    .avatar-model-wrap { position: relative; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .avatar-model-wrap img { width: 100%; height: 340px; object-fit: cover; object-position: top; display: block; }
+    .avatar-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.6)); padding: 28px 16px 16px; color: white; }
+    .avatar-overlay h3 { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
+    .avatar-overlay p { font-size: 12px; opacity: 0.85; }
+    .items-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .items-strip::-webkit-scrollbar { display: none; }
+    .strip-item { flex-shrink: 0; text-align: center; width: 72px; }
+    .strip-img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 2px solid var(--border); }
+    .strip-img-fallback { width: 72px; height: 72px; border-radius: 8px; background: var(--bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .strip-label { font-size: 10px; color: var(--muted); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* CAROUSEL DOTS */
+    .carousel-dots {
+      position: fixed; bottom: 16px; left: 0; right: 0;
+      display: flex; justify-content: center; gap: 6px; z-index: 60;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(0,0,0,0.2); transition: all 0.2s; cursor: pointer; }
+    .dot.active { background: var(--blue); width: 20px; border-radius: 4px; }
+
+    /* SWIPE HINT */
+    .swipe-hint { position: fixed; bottom: 34px; right: 16px; font-size: 11px; color: var(--muted); background: var(--white); border: 1px solid var(--border); padding: 4px 10px; border-radius: 10px; z-index: 60; opacity: 1; transition: opacity 0.5s; }
+
     @media (max-width: 480px) {
-      .auth-box { padding: 24px; }
       .occasion-grid { grid-template-columns: repeat(2, 1fr); }
-      .suggestion-cards { grid-template-columns: 1fr; }
-      .closet-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+      .composite-flatlay { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════
-     SCREEN 1: AUTH
-══════════════════════════════════════ -->
+<!-- ═══ SCREEN 1: AUTH ═══ -->
 <div id="screen-auth" class="screen active">
   <div class="auth-box">
     <div class="auth-logo">
       <div class="logo-big">Closet<span>AI</span></div>
       <p>Your existing wardrobe, curated by AI</p>
     </div>
-
     <div class="auth-tabs">
-      <div class="auth-tab active" onclick="switchAuthTab('signup')">Sign Up</div>
-      <div class="auth-tab" onclick="switchAuthTab('login')">Log In</div>
+      <div class="auth-tab active" onclick="switchTab('signup')">Sign Up</div>
+      <div class="auth-tab" onclick="switchTab('login')">Log In</div>
     </div>
-
     <div id="form-signup">
-      <button class="btn-oauth btn-full" onclick="demoLogin()">
+      <button class="btn-oauth" onclick="demoLogin()" style="margin-bottom:10px">
         <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2.04a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.48A4.8 4.8 0 0 1 4.5 7.5V5.43H1.83a8 8 0 0 0 0 7.14L4.5 10.48z"/><path fill="#EA4335" d="M8.98 3.58c1.32 0 2.44.45 3.35 1.35l2.5-2.5A8 8 0 0 0 1.83 5.43L4.5 7.5a4.77 4.77 0 0 1 4.48-3.92z"/></svg>
         Continue with Google
       </button>
-      <button class="btn-oauth apple btn-full" style="margin-top:10px" onclick="demoLogin()">
+      <button class="btn-oauth apple" onclick="demoLogin()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
         Continue with Apple
       </button>
@@ -448,85 +342,71 @@
       <div class="form-group"><label>Email</label><input type="email" placeholder="you@email.com" /></div>
       <div class="form-group"><label>Password</label><input type="password" placeholder="Min 8 characters" /></div>
       <button class="btn btn-primary btn-full btn-lg" style="margin-top:4px" onclick="demoLogin()">Create Account</button>
-      <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px">By creating an account you agree to our <u>Terms</u> and <u>Privacy Policy</u></p>
+      <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px">By signing up you agree to our <u>Terms</u> &amp; <u>Privacy Policy</u></p>
     </div>
-
     <div id="form-login" style="display:none">
-      <button class="btn-oauth btn-full" onclick="demoLogin()">
+      <button class="btn-oauth" onclick="demoLogin()" style="margin-bottom:16px">
         <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2.04a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.48A4.8 4.8 0 0 1 4.5 7.5V5.43H1.83a8 8 0 0 0 0 7.14L4.5 10.48z"/><path fill="#EA4335" d="M8.98 3.58c1.32 0 2.44.45 3.35 1.35l2.5-2.5A8 8 0 0 0 1.83 5.43L4.5 7.5a4.77 4.77 0 0 1 4.48-3.92z"/></svg>
         Continue with Google
       </button>
       <div class="divider">or log in with email</div>
       <div class="form-group"><label>Email</label><input type="email" placeholder="you@email.com" /></div>
       <div class="form-group"><label>Password</label><input type="password" placeholder="Password" /></div>
-      <p style="text-align:right;font-size:12px;margin-top:-8px;margin-bottom:14px"><a href="#" style="color:var(--blue)">Forgot password?</a></p>
+      <p style="text-align:right;font-size:12px;margin:-8px 0 14px"><a href="#" style="color:var(--blue)">Forgot password?</a></p>
       <button class="btn btn-primary btn-full btn-lg" onclick="demoLogin()">Log In</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SCREEN 2: CONNECT SHOPPING ACCOUNT
-══════════════════════════════════════ -->
+<!-- ═══ SCREEN 2: CONNECT ═══ -->
 <div id="screen-connect" class="screen">
   <div class="connect-hero">
     <h1>Welcome to ClosetAI 👋</h1>
-    <p>Let's build your digital wardrobe. First, a quick tip to get the most out of the app.</p>
+    <p>Let's build your digital wardrobe. Connect your shopping accounts to import your closet automatically.</p>
   </div>
   <div class="connect-body">
     <div class="connect-banner">
-      <h3>💡 Recommended: Connect your shopping account</h3>
-      <p>We recommend connecting the Google or Apple account you normally use when shopping online. This allows us to securely retrieve your purchase history and build your closet automatically — so you don't have to upload each item manually.</p>
-      <div class="connect-banner-btns">
-        <button class="btn btn-primary" onclick="goTo('screen-brands')">Connect Shopping Account</button>
+      <h3>💡 Connect your shopping account</h3>
+      <p>Connect the Google or Apple account you use when shopping online. We'll securely retrieve your purchase history and build your closet — no manual uploads needed.</p>
+      <div class="connect-btns">
+        <button class="btn btn-primary" onclick="goTo('screen-brands')">Connect Account</button>
         <button class="btn btn-ghost" onclick="goTo('screen-brands')">Skip for now</button>
       </div>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:13px;line-height:1.7">
-      <p>🔒 Your credentials are encrypted and used solely to retrieve your purchase history.</p>
-      <p>We never store retailer passwords after retrieval is complete.</p>
-    </div>
+    <p style="text-align:center;font-size:12px;color:var(--muted);line-height:1.8">🔒 Credentials encrypted · purchase history only · never stored after retrieval</p>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SCREEN 3: BRAND SELECTION
-══════════════════════════════════════ -->
+<!-- ═══ SCREEN 3: BRAND SELECTION ═══ -->
 <div id="screen-brands" class="screen">
   <div class="setup-header">
-    <div class="step-label">Step 1 of 2 — Build Your Closet</div>
+    <div class="step-label">Step 1 of 2</div>
     <h1>Which brands do you shop?</h1>
-    <p>Select all the brands you regularly buy from. We'll retrieve your purchase history automatically.</p>
-    <div class="progress-bar"><div class="progress-bar-fill" style="width:50%"></div></div>
+    <p>Select all brands you regularly buy from.</p>
+    <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
   </div>
   <div class="brand-search-wrap">
-    <input type="text" id="brand-search" placeholder="🔍  Search brands..." oninput="filterBrands(this.value)" />
+    <input type="text" placeholder="🔍  Search brands…" oninput="filterBrands(this.value)" />
   </div>
-  <div id="brand-list" class="brand-group">
-    <!-- injected by JS -->
-  </div>
+  <div id="brand-list" class="brand-group"></div>
   <div class="setup-footer">
-    <span class="selected-count"><strong id="selected-brand-count">0</strong> brands selected</span>
-    <button class="btn btn-primary" onclick="goConnect()">Connect &amp; Import →</button>
+    <span class="selected-count"><strong id="sel-count">0</strong> brands selected</span>
+    <button class="btn btn-primary" onclick="goConnect()">Import My Closet →</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SCREEN 4: CONNECTING / LOADING CLOSET
-══════════════════════════════════════ -->
+<!-- ═══ SCREEN 4: CONNECTING ═══ -->
 <div id="screen-connecting" class="screen">
   <div class="connecting-box">
-    <div style="font-size:48px;margin-bottom:16px">🔄</div>
-    <h2>Building your closet…</h2>
-    <p>We're securely connecting to your retailer accounts and importing your purchase history.</p>
-    <div id="retailer-status-list" class="retailer-status-list"></div>
+    <div style="font-size:48px;margin-bottom:16px" id="connect-emoji">🔄</div>
+    <h2 id="connect-title">Building your closet…</h2>
+    <p id="connect-sub">Securely connecting to retailer accounts and importing your purchase history.</p>
+    <div id="retailer-list" class="retailer-status-list"></div>
     <button id="view-closet-btn" class="btn btn-primary btn-full" style="display:none" onclick="goTo('screen-closet')">View My Closet →</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SCREEN 5: CLOSET VIEW
-══════════════════════════════════════ -->
+<!-- ═══ SCREEN 5: CLOSET ═══ -->
 <div id="screen-closet" class="screen">
   <div class="app-header">
     <div class="logo">Closet<span>AI</span></div>
@@ -540,20 +420,18 @@
       <h2>My Closet</h2>
       <span class="item-count" id="closet-count">0 items</span>
     </div>
-    <div class="category-tabs" id="category-tabs"></div>
+    <div class="cat-tabs" id="cat-tabs"></div>
   </div>
   <div class="closet-body">
     <div class="closet-grid" id="closet-grid"></div>
   </div>
   <div class="generate-cta">
-    <p>Ready to get dressed? <strong>AI Stylist is standing by.</strong></p>
+    <p><strong>22 items</strong> · Ready to style</p>
     <button class="btn btn-primary" onclick="goTo('screen-generate')">✨ Generate Outfits</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SCREEN 6: GENERATE — CONTEXT INPUTS
-══════════════════════════════════════ -->
+<!-- ═══ SCREEN 6: GENERATE ═══ -->
 <div id="screen-generate" class="screen">
   <div class="app-header">
     <div class="logo">Closet<span>AI</span></div>
@@ -564,91 +442,62 @@
   </div>
   <div class="generate-body">
     <h2>What are you dressing for?</h2>
-    <p class="subtitle">Your AI stylist will use this context to build the perfect looks from your closet.</p>
-
-    <div class="context-card">
+    <p class="subtitle">Your AI stylist uses this to build perfectly suited looks.</p>
+    <div class="ctx-card">
       <h3>Today's Weather</h3>
-      <div class="weather-display">
+      <div class="weather-row">
         <div class="weather-icon">🌤️</div>
-        <div class="weather-info">
-          <div class="temp">68°F</div>
-          <div class="condition">Partly Cloudy</div>
-          <div class="location">📍 Atlanta, GA</div>
+        <div>
+          <div class="weather-temp">68°F</div>
+          <div class="weather-sub">Partly Cloudy · Atlanta, GA</div>
         </div>
       </div>
     </div>
-
-    <div class="context-card">
+    <div class="ctx-card">
       <h3>Occasion</h3>
       <div class="occasion-grid">
-        <div class="occasion-tile selected" onclick="selectOccasion(this, 'Work')">
-          <div class="occ-icon">💼</div>
-          <div class="occ-label">Work</div>
-        </div>
-        <div class="occasion-tile" onclick="selectOccasion(this, 'Casual')">
-          <div class="occ-icon">😊</div>
-          <div class="occ-label">Casual</div>
-        </div>
-        <div class="occasion-tile" onclick="selectOccasion(this, 'Evening')">
-          <div class="occ-icon">🌙</div>
-          <div class="occ-label">Evening</div>
-        </div>
-        <div class="occasion-tile" onclick="selectOccasion(this, 'Formal')">
-          <div class="occ-icon">✨</div>
-          <div class="occ-label">Formal</div>
-        </div>
-        <div class="occasion-tile" onclick="selectOccasion(this, 'Active')">
-          <div class="occ-icon">🏃</div>
-          <div class="occ-label">Active</div>
-        </div>
-        <div class="occasion-tile" onclick="selectOccasion(this, 'Travel')">
-          <div class="occ-icon">✈️</div>
-          <div class="occ-label">Travel</div>
-        </div>
+        <div class="occ-tile selected" onclick="selectOcc(this)"><div class="occ-icon">💼</div><div class="occ-label">Work</div></div>
+        <div class="occ-tile" onclick="selectOcc(this)"><div class="occ-icon">😊</div><div class="occ-label">Casual</div></div>
+        <div class="occ-tile" onclick="selectOcc(this)"><div class="occ-icon">🌙</div><div class="occ-label">Evening</div></div>
+        <div class="occ-tile" onclick="selectOcc(this)"><div class="occ-icon">✨</div><div class="occ-label">Formal</div></div>
+        <div class="occ-tile" onclick="selectOcc(this)"><div class="occ-icon">🏃</div><div class="occ-label">Active</div></div>
+        <div class="occ-tile" onclick="selectOcc(this)"><div class="occ-icon">✈️</div><div class="occ-label">Travel</div></div>
       </div>
     </div>
-
-    <div class="context-card">
-      <h3>Style Vibe (optional)</h3>
+    <div class="ctx-card">
+      <h3>Style Vibe</h3>
       <div class="style-chips">
-        <div class="style-chip selected" onclick="toggleChip(this)">Classic</div>
-        <div class="style-chip" onclick="toggleChip(this)">Minimalist</div>
-        <div class="style-chip" onclick="toggleChip(this)">Bold</div>
-        <div class="style-chip" onclick="toggleChip(this)">Streetwear</div>
-        <div class="style-chip" onclick="toggleChip(this)">Bohemian</div>
-        <div class="style-chip" onclick="toggleChip(this)">Preppy</div>
+        <div class="s-chip selected" onclick="this.classList.toggle('selected')">Classic</div>
+        <div class="s-chip" onclick="this.classList.toggle('selected')">Minimalist</div>
+        <div class="s-chip" onclick="this.classList.toggle('selected')">Bold</div>
+        <div class="s-chip" onclick="this.classList.toggle('selected')">Streetwear</div>
+        <div class="s-chip" onclick="this.classList.toggle('selected')">Bohemian</div>
+        <div class="s-chip" onclick="this.classList.toggle('selected')">Preppy</div>
       </div>
     </div>
   </div>
-
-  <div class="generate-footer">
-    <button class="btn btn-primary btn-full btn-lg" onclick="startGeneration()">
-      ✨ Style Me Now
-    </button>
+  <div class="gen-footer">
+    <button class="btn btn-primary btn-full btn-lg" onclick="startGen()">✨ Style Me Now</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SCREEN 7: AI LOADING
-══════════════════════════════════════ -->
+<!-- ═══ SCREEN 7: LOADING ═══ -->
 <div id="screen-loading" class="screen">
-  <div class="loading-content">
-    <div class="loading-spinner"></div>
-    <h2>Your AI Stylist is working…</h2>
-    <p>Analyzing your closet and building your looks</p>
-    <div class="loading-steps">
-      <div class="loading-step done" id="lstep-1"><div class="step-dot"></div> Reading your closet items</div>
-      <div class="loading-step active" id="lstep-2"><div class="step-dot"></div> Checking today's weather context</div>
-      <div class="loading-step" id="lstep-3"><div class="step-dot"></div> Applying color theory and style rules</div>
-      <div class="loading-step" id="lstep-4"><div class="step-dot"></div> Composing outfit combinations</div>
-      <div class="loading-step" id="lstep-5"><div class="step-dot"></div> Generating color palettes</div>
+  <div class="loading-box">
+    <div class="big-spinner"></div>
+    <h2>Styling your wardrobe…</h2>
+    <p>Your AI stylist is composing your perfect looks</p>
+    <div class="load-steps">
+      <div class="load-step done"><div class="step-dot"></div>Reading your 22 closet items</div>
+      <div class="load-step curr" id="ls2"><div class="step-dot"></div>Checking weather &amp; occasion context</div>
+      <div class="load-step" id="ls3"><div class="step-dot"></div>Applying color theory &amp; style rules</div>
+      <div class="load-step" id="ls4"><div class="step-dot"></div>Composing outfit combinations</div>
+      <div class="load-step" id="ls5"><div class="step-dot"></div>Generating color palettes</div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SCREEN 8: OUTFIT RESULTS
-══════════════════════════════════════ -->
+<!-- ═══ SCREEN 8: OUTFIT RESULTS ═══ -->
 <div id="screen-outfits" class="screen">
   <div class="app-header">
     <div class="logo">Closet<span>AI</span></div>
@@ -657,390 +506,514 @@
       <button class="nav-btn active">Outfits</button>
     </div>
   </div>
-  <div class="outfits-header">
+  <div class="outfits-topbar">
     <h2>Your Outfits ✨</h2>
-    <button class="regen-btn" onclick="startGeneration()">↻ Regenerate</button>
+    <button class="regen-btn" onclick="startGen()">↻ Regenerate</button>
   </div>
-  <div class="outfit-tabs" id="outfit-tabs"></div>
-  <div class="outfits-body" id="outfits-body"></div>
+  <div class="carousel-wrapper">
+    <div class="carousel-track" id="carousel-track"></div>
+  </div>
+  <div class="carousel-dots" id="carousel-dots"></div>
+  <div class="swipe-hint" id="swipe-hint">← swipe →</div>
 </div>
 
 <script>
-// ══════════════════════════════════════
+// ═══════════════════════════════════════
 // DATA
-// ══════════════════════════════════════
+// ═══════════════════════════════════════
 const BRANDS = [
-  { name: 'Zara', color: '#000', category: 'High Street' },
-  { name: 'H&M', color: '#E50010', category: 'High Street' },
-  { name: 'ASOS', color: '#2A6EBB', category: 'High Street' },
-  { name: 'Mango', color: '#B8860B', category: 'High Street' },
-  { name: 'Uniqlo', color: '#E40026', category: 'High Street' },
-  { name: 'Gap', color: '#002664', category: 'High Street' },
-  { name: 'COS', color: '#1A1A1A', category: 'Contemporary' },
-  { name: '& Other Stories', color: '#8B6888', category: 'Contemporary' },
-  { name: 'Madewell', color: '#4A7C59', category: 'Contemporary' },
-  { name: 'J.Crew', color: '#003087', category: 'Contemporary' },
-  { name: 'Club Monaco', color: '#2C2C2C', category: 'Contemporary' },
-  { name: 'Banana Republic', color: '#5C4033', category: 'Contemporary' },
-  { name: 'Reformation', color: '#C13B3B', category: 'Contemporary' },
-  { name: 'Anthropologie', color: '#B07040', category: 'Contemporary' },
-  { name: 'Free People', color: '#7A8C6E', category: 'Contemporary' },
-  { name: 'Nike', color: '#111', category: 'Athleisure' },
-  { name: 'Lululemon', color: '#97233F', category: 'Athleisure' },
-  { name: 'New Balance', color: '#CF4520', category: 'Athleisure' },
-  { name: 'Adidas', color: '#000', category: 'Athleisure' },
-  { name: 'Net-a-Porter', color: '#1A1A1A', category: 'Luxury' },
-  { name: 'Saks Fifth Avenue', color: '#000080', category: 'Luxury' },
-  { name: 'Nordstrom', color: '#001E62', category: 'Luxury' },
+  { name:'Zara', color:'#1a1a1a', cat:'High Street' },
+  { name:'H&M', color:'#E50010', cat:'High Street' },
+  { name:'ASOS', color:'#2A6EBB', cat:'High Street' },
+  { name:'Mango', color:'#B8860B', cat:'High Street' },
+  { name:'Uniqlo', color:'#E40026', cat:'High Street' },
+  { name:'Gap', color:'#002664', cat:'High Street' },
+  { name:'COS', color:'#2a2a2a', cat:'Contemporary' },
+  { name:'& Other Stories', color:'#8B6888', cat:'Contemporary' },
+  { name:'Madewell', color:'#4A7C59', cat:'Contemporary' },
+  { name:'J.Crew', color:'#003087', cat:'Contemporary' },
+  { name:'Club Monaco', color:'#3a3a3a', cat:'Contemporary' },
+  { name:'Banana Republic', color:'#5C4033', cat:'Contemporary' },
+  { name:'Reformation', color:'#C13B3B', cat:'Contemporary' },
+  { name:'Anthropologie', color:'#B07040', cat:'Contemporary' },
+  { name:'Free People', color:'#7A8C6E', cat:'Contemporary' },
+  { name:'Nike', color:'#111', cat:'Athleisure' },
+  { name:'Lululemon', color:'#97233F', cat:'Athleisure' },
+  { name:'New Balance', color:'#CF4520', cat:'Athleisure' },
+  { name:'Adidas', color:'#000', cat:'Athleisure' },
+  { name:'Net-a-Porter', color:'#1a1a1a', cat:'Luxury' },
+  { name:'Nordstrom', color:'#001E62', cat:'Luxury' },
 ];
 
-const CLOSET_ITEMS = [
-  { id: 1,  name: 'White Button-Down',     brand: 'Zara',         category: 'Tops',        emoji: '👔', color: '#FFFFFF', colorName: 'White' },
-  { id: 2,  name: 'Black Turtleneck',      brand: 'COS',          category: 'Tops',        emoji: '🖤', color: '#1A1A1A', colorName: 'Black' },
-  { id: 3,  name: 'Striped Breton Top',    brand: 'Mango',        category: 'Tops',        emoji: '👕', color: '#F0F0F0', colorName: 'Navy Stripe' },
-  { id: 4,  name: 'White Linen Shirt',     brand: 'Uniqlo',       category: 'Tops',        emoji: '👔', color: '#FAF8F3', colorName: 'Ivory' },
-  { id: 5,  name: 'Cream Knit Sweater',    brand: '& Other Stories', category: 'Tops',     emoji: '🧶', color: '#F5F0E8', colorName: 'Cream' },
-  { id: 6,  name: 'Dark Wash Straight Jeans', brand: 'Zara',      category: 'Bottoms',     emoji: '👖', color: '#1C3A5E', colorName: 'Dark Wash' },
-  { id: 7,  name: 'Black Tailored Trousers', brand: 'COS',        category: 'Bottoms',     emoji: '🩲', color: '#1A1A1A', colorName: 'Black' },
-  { id: 8,  name: 'Camel Midi Skirt',      brand: '& Other Stories', category: 'Bottoms',  emoji: '👗', color: '#C9A96E', colorName: 'Camel' },
-  { id: 9,  name: 'Navy Wide-Leg Pants',   brand: 'Club Monaco',  category: 'Bottoms',     emoji: '👖', color: '#1B3A6B', colorName: 'Navy' },
-  { id: 10, name: 'Black Wrap Dress',      brand: 'Reformation',  category: 'Dresses',     emoji: '👗', color: '#1A1A1A', colorName: 'Black' },
-  { id: 11, name: 'Floral Midi Dress',     brand: 'Anthropologie', category: 'Dresses',    emoji: '🌸', color: '#E8D5C4', colorName: 'Blush Floral' },
-  { id: 12, name: 'Camel Overcoat',        brand: '& Other Stories', category: 'Outerwear', emoji: '🧥', color: '#C9A96E', colorName: 'Camel' },
-  { id: 13, name: 'Black Leather Jacket',  brand: 'Zara',         category: 'Outerwear',   emoji: '🧥', color: '#1A1A1A', colorName: 'Black' },
-  { id: 14, name: 'Navy Blazer',           brand: 'J.Crew',       category: 'Outerwear',   emoji: '🧣', color: '#1B3A6B', colorName: 'Navy' },
-  { id: 15, name: 'White Sneakers',        brand: 'New Balance',  category: 'Shoes',       emoji: '👟', color: '#F5F5F5', colorName: 'White' },
-  { id: 16, name: 'Black Ankle Boots',     brand: 'Zara',         category: 'Shoes',       emoji: '👢', color: '#1A1A1A', colorName: 'Black' },
-  { id: 17, name: 'Nude Block Heels',      brand: 'Mango',        category: 'Shoes',       emoji: '👠', color: '#D4A574', colorName: 'Nude' },
-  { id: 18, name: 'Tan Loafers',           brand: 'J.Crew',       category: 'Shoes',       emoji: '👞', color: '#A0785A', colorName: 'Tan' },
-  { id: 19, name: 'Gold Hoop Earrings',    brand: 'Madewell',     category: 'Accessories', emoji: '💛', color: '#C9A96E', colorName: 'Gold' },
-  { id: 20, name: 'Pearl Drop Earrings',   brand: 'J.Crew',       category: 'Accessories', emoji: '⚪', color: '#F0EDE8', colorName: 'Pearl' },
-  { id: 21, name: 'Layered Gold Necklace', brand: 'Madewell',     category: 'Accessories', emoji: '📿', color: '#C9A96E', colorName: 'Gold' },
-  { id: 22, name: 'Black Leather Belt',    brand: 'Zara',         category: 'Accessories', emoji: '⬛', color: '#1A1A1A', colorName: 'Black' },
+// Unsplash photo IDs mapped to categories for real product photos
+const UNSPLASH = {
+  tops:       ['1598300042247-d088f8ab3a91','1576566588028-4147f3842f27','1512327428351-e2d42cb5e4f1','1588099768523-f4e6a5679d88','1582552938357-32b906df40cb'],
+  bottoms:    ['1542272604-787c3835535d','1594938298603-c8148c4b4f0e','1551028719-00167b16eac5','1583496661160-fb5218beaf21','1551854839-a1dbec5b58fc'],
+  dresses:    ['1595777457583-95e059d581b8','1572804013309-59a88b7e92f1'],
+  outerwear:  ['1539533018447-63fcce2678e3','1507679799987-c73779587ccf'],
+  shoes:      ['1600185365926-3a2ce3cdb9eb','1543163521-1bf539c55dd2','1519554209616-8042d0cb40df','1491553895911-0055eca6402d'],
+  accessories:['1535632066927-ab7c9ab60908','1611591437281-460bfbe1220a','1599643477877-530eb83abc8e'],
+};
+
+function photoUrl(id, w=300, h=400) {
+  return `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&fit=crop&auto=format&q=75`;
+}
+
+let photoIdx = { tops:0, bottoms:0, dresses:0, outerwear:0, shoes:0, accessories:0 };
+function nextPhoto(cat) {
+  const key = cat.toLowerCase();
+  const arr = UNSPLASH[key] || UNSPLASH.tops;
+  const id = arr[photoIdx[key] % arr.length];
+  photoIdx[key]++;
+  return photoUrl(id);
+}
+
+const CLOSET = [
+  // La Femme Wanderer Outfit 1 — Mocha Neutrals
+  { id:1,  name:'Brown Wrap Cardigan',       brand:'Zara',              cat:'Tops',        emoji:'🟫', color:'#5C3D2E', photoKey:'tops',       imgId:'1582552938357-32b906df40cb' },
+  { id:2,  name:'Ivory Wide-Leg Trousers',   brand:'& Other Stories',   cat:'Bottoms',     emoji:'🤍', color:'#F5F0E8', photoKey:'bottoms',    imgId:'1594938298603-c8148c4b4f0e' },
+  { id:3,  name:'Brown Bow Ballet Flats',    brand:'Mango',             cat:'Shoes',       emoji:'🟫', color:'#5C3D2E', photoKey:'shoes',      imgId:'1491553895911-0055eca6402d' },
+  { id:4,  name:'Beige Suede Hobo Bag',      brand:'Mango',             cat:'Accessories', emoji:'🟤', color:'#C9A96E', photoKey:'accessories',imgId:'1599643477877-530eb83abc8e' },
+  // La Femme Wanderer Outfit 2 — Neutral Layering
+  { id:5,  name:'Oat Oversized Cardigan',    brand:'Madewell',          cat:'Tops',        emoji:'🌾', color:'#D4C5A9', photoKey:'tops',       imgId:'1588099768523-f4e6a5679d88' },
+  { id:6,  name:'Charcoal Straight Jeans',   brand:'Madewell',          cat:'Bottoms',     emoji:'⚫', color:'#3D3D3D', photoKey:'bottoms',    imgId:'1542272604-787c3835535d' },
+  { id:7,  name:'Mocha Ribbed Tank',         brand:'COS',               cat:'Tops',        emoji:'🟤', color:'#7B5B46', photoKey:'tops',       imgId:'1512327428351-e2d42cb5e4f1' },
+  { id:8,  name:'Cream Platform Sneakers',   brand:'New Balance',       cat:'Shoes',       emoji:'🤍', color:'#F5F5F0', photoKey:'shoes',      imgId:'1600185365926-3a2ce3cdb9eb' },
+  { id:9,  name:'Woven Cream Tote',          brand:'Anthropologie',     cat:'Accessories', emoji:'🌿', color:'#E8DCC8', photoKey:'accessories',imgId:'1535632066927-ab7c9ab60908' },
+  // Other closet items
+  { id:10, name:'White Button-Down',         brand:'Uniqlo',            cat:'Tops',        emoji:'👔', color:'#FFFFFF', photoKey:'tops',       imgId:'1598300042247-d088f8ab3a91' },
+  { id:11, name:'Black Turtleneck',          brand:'COS',               cat:'Tops',        emoji:'⚫', color:'#1a1a1a', photoKey:'tops',       imgId:'1576566588028-4147f3842f27' },
+  { id:12, name:'Dark Wash Straight Jeans',  brand:'Zara',              cat:'Bottoms',     emoji:'💙', color:'#1C3A5E', photoKey:'bottoms',    imgId:'1551854839-a1dbec5b58fc' },
+  { id:13, name:'Black Tailored Trousers',   brand:'COS',               cat:'Bottoms',     emoji:'⚫', color:'#1a1a1a', photoKey:'bottoms',    imgId:'1551028719-00167b16eac5' },
+  { id:14, name:'Camel Midi Skirt',          brand:'& Other Stories',   cat:'Bottoms',     emoji:'🟡', color:'#C9A96E', photoKey:'bottoms',    imgId:'1583496661160-fb5218beaf21' },
+  { id:15, name:'Black Wrap Dress',          brand:'Reformation',       cat:'Dresses',     emoji:'🖤', color:'#1a1a1a', photoKey:'dresses',    imgId:'1595777457583-95e059d581b8' },
+  { id:16, name:'Floral Midi Dress',         brand:'Anthropologie',     cat:'Dresses',     emoji:'🌸', color:'#E8D5C4', photoKey:'dresses',    imgId:'1572804013309-59a88b7e92f1' },
+  { id:17, name:'Camel Overcoat',            brand:'& Other Stories',   cat:'Outerwear',   emoji:'🧥', color:'#C9A96E', photoKey:'outerwear',  imgId:'1539533018447-63fcce2678e3' },
+  { id:18, name:'Black Leather Jacket',      brand:'Zara',              cat:'Outerwear',   emoji:'🖤', color:'#1a1a1a', photoKey:'outerwear',  imgId:'1507679799987-c73779587ccf' },
+  { id:19, name:'Navy Blazer',               brand:'J.Crew',            cat:'Outerwear',   emoji:'🧣', color:'#1B3A6B', photoKey:'outerwear',  imgId:'1507679799987-c73779587ccf' },
+  { id:20, name:'Black Ankle Boots',         brand:'Zara',              cat:'Shoes',       emoji:'👢', color:'#1a1a1a', photoKey:'shoes',      imgId:'1543163521-1bf539c55dd2' },
+  { id:21, name:'Nude Block Heels',          brand:'Mango',             cat:'Shoes',       emoji:'👠', color:'#D4A574', photoKey:'shoes',      imgId:'1519554209616-8042d0cb40df' },
+  { id:22, name:'Gold Hoop Earrings',        brand:'Madewell',          cat:'Accessories', emoji:'💛', color:'#C9A96E', photoKey:'accessories',imgId:'1611591437281-460bfbe1220a' },
+];
+
+// Model photos for avatar view (Unsplash fashion model IDs)
+const MODEL_PHOTOS = [
+  '1469334031218-e382a71b716b',
+  '1515886657613-9f3515b0c78f',
+  '1508214751196-bcfd4ca60f91',
+  '1529139574466-a303027330d5',
 ];
 
 const OUTFITS = [
   {
-    name: 'Monochrome Neutral',
+    name: 'Effortless Elegance in Mocha Neutrals',
+    palette: ['#5C3D2E','#F5F0E8','#C9A96E','#E8DCC8','#2a2a2a'],
+    paletteName: 'Mocha Neutrals',
     occasion: 'Work',
-    palette: ['#F5F0E8', '#C9A96E', '#A0785A', '#8B6914', '#333'],
-    note: 'A warm tonal palette that reads polished and effortless. The camel-on-ivory combination is timeless boardroom dressing — refined without trying too hard.',
-    slots: [
-      { type: 'Top',      itemId: 4,  icon: '👔' },
-      { type: 'Bottom',   itemId: 8,  icon: '👗' },
-      { type: 'Outerwear',itemId: 12, icon: '🧥' },
-      { type: 'Shoes',    itemId: 18, icon: '👞' },
-      { type: 'Earrings', itemId: 19, icon: '💛' },
-    ],
+    flatlay: 'images/outfit_mocha.png',
+    flatlayCaption: '"Effortless elegance in mocha neutrals." — La Femme Wanderer',
+    modelPhoto: MODEL_PHOTOS[0],
+    note: 'A warm tonal palette that reads polished and effortless. The brown-on-ivory combination is timeless boardroom dressing — refined without trying too hard. Let the bag do the talking.',
+    itemIds: [1, 2, 3, 4],
     suggestions: [
-      { name: 'Camel Cashmere Scarf', brand: 'COS', price: '$85', emoji: '🧣', tag: 'Palette Extension' },
-      { name: 'Structured Tote Bag', brand: 'Mango', price: '$69', emoji: '👜', tag: 'Complete the Look' },
+      { name:'Camel Cashmere Scarf', brand:'COS', price:'$85', emoji:'🧣', tag:'Palette Extension', imgId:'1582552938357-32b906df40cb' },
+      { name:'Gold Chain Belt', brand:'Mango', price:'$35', emoji:'✨', tag:'Upgrade Suggestion', imgId:'1599643477877-530eb83abc8e' },
+    ]
+  },
+  {
+    name: 'Effortless Neutral Layering',
+    palette: ['#D4C5A9','#3D3D3D','#7B5B46','#F5F5F0','#E8DCC8'],
+    paletteName: 'Warm Neutrals',
+    occasion: 'Casual',
+    flatlay: 'images/outfit_neutral.png',
+    flatlayCaption: '"Effortless neutral layering for everyday elegance." — La Femme Wanderer',
+    modelPhoto: MODEL_PHOTOS[1],
+    note: 'The cardigan-over-tank with straight-leg denim is the ultimate off-duty formula. Cream sneakers keep the palette cohesive — a woven tote completes the effortless edit.',
+    itemIds: [5, 6, 7, 8, 9],
+    suggestions: [
+      { name:'Ribbed Beanie', brand:'Madewell', price:'$38', emoji:'🧢', tag:'Seasonal Add', imgId:'1588099768523-f4e6a5679d88' },
+      { name:'Gold Hoop Earrings', brand:'Madewell', price:'$28', emoji:'💛', tag:'Closet Gap', imgId:'1611591437281-460bfbe1220a' },
     ]
   },
   {
     name: 'Classic Navy',
+    palette: ['#1B3A6B','#FFFFFF','#F0F0F0','#C9A96E','#4A5568'],
+    paletteName: 'Classic Navy',
     occasion: 'Work',
-    palette: ['#1B3A6B', '#FFFFFF', '#F5F5F5', '#C8B89A', '#4A5568'],
-    note: 'Nautical-inspired but grounded. The navy and white combination is universally flattering — the white sneakers keep it modern rather than uptight.',
-    slots: [
-      { type: 'Top',      itemId: 3,  icon: '👕' },
-      { type: 'Bottom',   itemId: 9,  icon: '👖' },
-      { type: 'Outerwear',itemId: 14, icon: '🧣' },
-      { type: 'Shoes',    itemId: 15, icon: '👟' },
-      { type: 'Earrings', itemId: 20, icon: '⚪' },
-    ],
+    flatlay: null,
+    modelPhoto: MODEL_PHOTOS[2],
+    note: 'The navy blazer over a crisp white shirt is perennially correct. Dark jeans modernize it — this is the polish of a boardroom look with the ease of everyday dressing.',
+    itemIds: [10, 19, 12, 20, 22],
     suggestions: [
-      { name: 'Navy Crossbody Bag', brand: 'Madewell', price: '$98', emoji: '👜', tag: 'Palette Match' },
-      { name: 'Gold Bangle Set', brand: 'J.Crew', price: '$45', emoji: '💛', tag: 'Accessory Gap' },
+      { name:'Navy Silk Scarf', brand:'Net-a-Porter', price:'$95', emoji:'🧣', tag:'Palette Extension', imgId:'1582552938357-32b906df40cb' },
+      { name:'Black Leather Belt', brand:'Zara', price:'$29', emoji:'⬛', tag:'Complete the Look', imgId:'1599643477877-530eb83abc8e' },
     ]
   },
   {
     name: 'Minimal Black',
+    palette: ['#1a1a1a','#2D2D2D','#C9A96E','#FFFFFF','#8B8B8B'],
+    paletteName: 'Minimal Black',
     occasion: 'Evening',
-    palette: ['#1A1A1A', '#2D2D2D', '#C9A96E', '#FFFFFF', '#8B8B8B'],
-    note: 'Head-to-toe black never fails for an evening out. The gold hoops are the only accent needed — they catch the light and elevate the whole look.',
-    slots: [
-      { type: 'Top',       itemId: 2,  icon: '🖤' },
-      { type: 'Bottom',    itemId: 7,  icon: '🩲' },
-      { type: 'Outerwear', itemId: 13, icon: '🧥' },
-      { type: 'Shoes',     itemId: 16, icon: '👢' },
-      { type: 'Earrings',  itemId: 19, icon: '💛' },
-      { type: 'Necklace',  itemId: 21, icon: '📿' },
-    ],
+    flatlay: null,
+    modelPhoto: MODEL_PHOTOS[3],
+    note: 'Head-to-toe black never fails for an evening out. The leather jacket gives it edge, the gold hoops are the only accent you need — they catch the light and elevate everything.',
+    itemIds: [11, 13, 18, 20, 22],
+    gap: { type:'Necklace', text:'Add a necklace to complete the look', emoji:'📿' },
     suggestions: [
-      { name: 'Black Mini Bag', brand: 'Zara', price: '$49', emoji: '👛', tag: 'Complete the Look' },
-    ]
-  },
-  {
-    name: 'Effortless Chic',
-    occasion: 'Casual',
-    palette: ['#FFFFFF', '#1C3A5E', '#D4A574', '#F5F0E8', '#4A4A4A'],
-    note: 'The classic white-and-denim formula elevated with nude heels and a gold necklace. Simple but considered — looks like you made an effort without trying.',
-    slots: [
-      { type: 'Top',      itemId: 1,  icon: '👔' },
-      { type: 'Bottom',   itemId: 6,  icon: '👖' },
-      { type: 'Shoes',    itemId: 17, icon: '👠' },
-      { type: 'Necklace', itemId: 21, icon: '📿' },
-    ],
-    gap: { type: 'Earrings', suggestion: 'Add earrings to complete the look', icon: '💎' },
-    suggestions: [
-      { name: 'Gold Stud Earrings', brand: 'Madewell', price: '$28', emoji: '💛', tag: 'Closet Gap' },
-      { name: 'White Canvas Tote', brand: 'Madewell', price: '$55', emoji: '🛍️', tag: 'Palette Extension' },
+      { name:'Layered Gold Necklace', brand:'Madewell', price:'$48', emoji:'📿', tag:'Closet Gap', imgId:'1599643477877-530eb83abc8e' },
     ]
   },
 ];
 
-// ══════════════════════════════════════
+// ═══════════════════════════════════════
 // STATE
-// ══════════════════════════════════════
+// ═══════════════════════════════════════
 let selectedBrands = new Set();
-let activeCategory = 'All';
+let currentOutfitView = {}; // per-slide: 'flatlay' or 'avatar'
 
-// ══════════════════════════════════════
+// ═══════════════════════════════════════
 // NAVIGATION
-// ══════════════════════════════════════
-function goTo(screenId) {
+// ═══════════════════════════════════════
+function goTo(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
+  document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
 }
 
-// ══════════════════════════════════════
+// ═══════════════════════════════════════
 // AUTH
-// ══════════════════════════════════════
-function switchAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t, i) => {
-    t.classList.toggle('active', (i === 0 && tab === 'signup') || (i === 1 && tab === 'login'));
-  });
-  document.getElementById('form-signup').style.display = tab === 'signup' ? 'block' : 'none';
-  document.getElementById('form-login').style.display  = tab === 'login'  ? 'block' : 'none';
+// ═══════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='signup')||(i===1&&tab==='login')));
+  document.getElementById('form-signup').style.display = tab==='signup'?'block':'none';
+  document.getElementById('form-login').style.display  = tab==='login' ?'block':'none';
 }
+function demoLogin() { goTo('screen-connect'); }
 
-function demoLogin() {
-  goTo('screen-connect');
-}
-
-// ══════════════════════════════════════
-// BRAND SELECTION
-// ══════════════════════════════════════
-function renderBrands(filter = '') {
-  const categories = [...new Set(BRANDS.map(b => b.category))];
-  const container = document.getElementById('brand-list');
-  container.innerHTML = '';
-  categories.forEach(cat => {
-    const matches = BRANDS.filter(b =>
-      b.category === cat && b.name.toLowerCase().includes(filter.toLowerCase())
-    );
+// ═══════════════════════════════════════
+// BRANDS
+// ═══════════════════════════════════════
+function renderBrands(filter='') {
+  const cats = [...new Set(BRANDS.map(b=>b.cat))];
+  const el = document.getElementById('brand-list');
+  el.innerHTML = '';
+  cats.forEach(cat => {
+    const matches = BRANDS.filter(b => b.cat===cat && b.name.toLowerCase().includes(filter.toLowerCase()));
     if (!matches.length) return;
-    const group = document.createElement('div');
-    group.innerHTML = `<div class="brand-group-label">${cat}</div><div class="brand-grid" id="grid-${cat.replace(/\s/g,'')}"></div>`;
-    container.appendChild(group);
-    const grid = group.querySelector('.brand-grid');
-    matches.forEach(brand => {
-      const initials = brand.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const g = document.createElement('div');
+    g.innerHTML = `<div class="brand-group-label">${cat}</div><div class="brand-grid" id="bg-${cat.replace(/\s/g,'')}"></div>`;
+    el.appendChild(g);
+    const grid = g.querySelector('.brand-grid');
+    matches.forEach(b => {
+      const init = b.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const tile = document.createElement('div');
-      tile.className = 'brand-tile' + (selectedBrands.has(brand.name) ? ' selected' : '');
-      tile.innerHTML = `
-        <div class="brand-avatar" style="background:${brand.color}">${initials}</div>
-        <span class="brand-name">${brand.name}</span>
-        <span class="brand-check">✓</span>`;
-      tile.onclick = () => toggleBrand(brand.name, tile);
+      tile.className = 'brand-tile' + (selectedBrands.has(b.name)?' selected':'');
+      tile.innerHTML = `<div class="brand-avatar" style="background:${b.color}">${init}</div><span class="brand-name">${b.name}</span><span class="brand-check">✓</span>`;
+      tile.onclick = () => {
+        selectedBrands.has(b.name) ? selectedBrands.delete(b.name) : selectedBrands.add(b.name);
+        tile.classList.toggle('selected', selectedBrands.has(b.name));
+        document.getElementById('sel-count').textContent = selectedBrands.size;
+      };
       grid.appendChild(tile);
     });
   });
 }
+function filterBrands(v) { renderBrands(v); }
 
-function toggleBrand(name, tile) {
-  if (selectedBrands.has(name)) { selectedBrands.delete(name); tile.classList.remove('selected'); }
-  else { selectedBrands.add(name); tile.classList.add('selected'); }
-  document.getElementById('selected-brand-count').textContent = selectedBrands.size;
-}
-
-function filterBrands(val) { renderBrands(val); }
-
+// ═══════════════════════════════════════
+// CONNECTING ANIMATION
+// ═══════════════════════════════════════
 function goConnect() {
   goTo('screen-connecting');
-  runConnectionAnimation();
-}
-
-// ══════════════════════════════════════
-// CONNECTION ANIMATION
-// ══════════════════════════════════════
-function runConnectionAnimation() {
-  const brands = selectedBrands.size > 0 ? [...selectedBrands].slice(0, 4) : ['Zara', 'J.Crew', 'Madewell'];
-  const list = document.getElementById('retailer-status-list');
+  const brands = selectedBrands.size > 0 ? [...selectedBrands].slice(0,4) : ['Madewell','Zara','& Other Stories'];
+  const list = document.getElementById('retailer-list');
   list.innerHTML = '';
-  const items = [];
-  brands.forEach(name => {
-    const b = BRANDS.find(x => x.name === name) || { name, color: '#007acc' };
-    const initials = b.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-    const el = document.createElement('div');
-    el.className = 'retailer-status';
-    el.innerHTML = `
-      <div class="brand-avatar" style="background:${b.color};width:36px;height:36px">${initials}</div>
+  brands.forEach((name, i) => {
+    const b = BRANDS.find(x=>x.name===name) || { name, color:'#007acc' };
+    const init = b.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const key = name.replace(/\s/g,'').replace(/&/g,'');
+    const row = document.createElement('div');
+    row.className = 'retailer-status';
+    row.innerHTML = `
+      <div class="brand-avatar" style="background:${b.color};width:36px;height:36px;border-radius:50%">${init}</div>
       <div class="retailer-status-text">
-        <div class="name">${b.name}</div>
-        <div class="status-line" id="status-${name.replace(/\s/g,'')}">Connecting…</div>
+        <div class="rname">${b.name}</div>
+        <div class="rline" id="rline-${key}">Connecting…</div>
       </div>
-      <div id="icon-${name.replace(/\s/g,'')}" class="status-icon"><div class="spinner"></div></div>`;
-    list.appendChild(el);
-    items.push({ name, el });
-  });
-  items.forEach((item, i) => {
+      <div id="rico-${key}"><div class="spinner"></div></div>`;
+    list.appendChild(row);
     setTimeout(() => {
-      const key = item.name.replace(/\s/g, '');
-      document.getElementById(`status-${key}`).textContent = '✓ Connected — 24 items imported';
-      document.getElementById(`icon-${key}`).innerHTML = '<span style="color:#2e7d32;font-size:20px">✓</span>';
-      if (i === items.length - 1) {
+      document.getElementById(`rline-${key}`).textContent = '✓ 6–8 items imported';
+      document.getElementById(`rico-${key}`).innerHTML = '<span style="color:#2e7d32;font-size:18px">✓</span>';
+      if (i === brands.length - 1) {
         setTimeout(() => {
+          document.getElementById('connect-emoji').textContent = '✅';
+          document.getElementById('connect-title').textContent = 'Closet built!';
+          document.getElementById('connect-sub').textContent = `${CLOSET.length} items imported across all categories.`;
           document.getElementById('view-closet-btn').style.display = 'block';
-          document.querySelector('.connecting-box div:first-child').textContent = '✅';
-          document.querySelector('.connecting-box h2').textContent = 'Closet built!';
-          document.querySelector('.connecting-box p').textContent = `${CLOSET_ITEMS.length} items imported successfully across all categories.`;
         }, 400);
       }
-    }, (i + 1) * 1200);
+    }, (i+1)*1100);
   });
 }
 
-// ══════════════════════════════════════
+// ═══════════════════════════════════════
 // CLOSET
-// ══════════════════════════════════════
-function renderCloset(category = 'All') {
-  activeCategory = category;
-  const categories = ['All', ...new Set(CLOSET_ITEMS.map(i => i.category))];
-  const tabsEl = document.getElementById('category-tabs');
+// ═══════════════════════════════════════
+function imgTag(item, cls='item-photo') {
+  return `<img class="${cls}" src="${photoUrl(item.imgId)}" alt="${item.name}"
+    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy" />
+    <div class="item-photo-fallback" style="background:${item.color}22;display:none">${item.emoji}</div>`;
+}
+
+function renderCloset(cat='All') {
+  const cats = ['All', ...new Set(CLOSET.map(i=>i.cat))];
+  const tabsEl = document.getElementById('cat-tabs');
   tabsEl.innerHTML = '';
-  categories.forEach(cat => {
+  cats.forEach(c => {
+    const cnt = c==='All' ? CLOSET.length : CLOSET.filter(i=>i.cat===c).length;
     const tab = document.createElement('button');
-    tab.className = 'cat-tab' + (cat === category ? ' active' : '');
-    const count = cat === 'All' ? CLOSET_ITEMS.length : CLOSET_ITEMS.filter(i => i.category === cat).length;
-    tab.textContent = `${cat} (${count})`;
-    tab.onclick = () => renderCloset(cat);
+    tab.className = 'cat-tab' + (c===cat?' active':'');
+    tab.textContent = `${c} (${cnt})`;
+    tab.onclick = () => renderCloset(c);
     tabsEl.appendChild(tab);
   });
-  const items = category === 'All' ? CLOSET_ITEMS : CLOSET_ITEMS.filter(i => i.category === category);
+  const items = cat==='All' ? CLOSET : CLOSET.filter(i=>i.cat===cat);
   document.getElementById('closet-count').textContent = `${items.length} items`;
   const grid = document.getElementById('closet-grid');
   grid.innerHTML = '';
   items.forEach(item => {
     const el = document.createElement('div');
     el.className = 'closet-item';
-    el.innerHTML = `
-      <div class="item-image" style="background:${item.color}22">${item.emoji}</div>
-      <div class="item-info">
-        <div class="item-name">${item.name}</div>
-        <div class="item-brand">${item.brand} <span class="item-color-dot" style="background:${item.color}"></span></div>
-      </div>`;
+    el.innerHTML = `${imgTag(item)}<div class="item-info"><div class="item-name">${item.name}</div><div class="item-brand"><span class="color-dot" style="background:${item.color}"></span>${item.brand}</div></div>`;
     grid.appendChild(el);
   });
-  const addBtn = document.createElement('div');
-  addBtn.className = 'add-item-btn';
-  addBtn.innerHTML = `<div class="plus">+</div><span>Add Item</span>`;
-  grid.appendChild(addBtn);
+  const add = document.createElement('div');
+  add.className = 'add-tile';
+  add.innerHTML = '<div class="plus">+</div><span>Add Item</span>';
+  grid.appendChild(add);
 }
 
-// ══════════════════════════════════════
-// OUTFIT GENERATION
-// ══════════════════════════════════════
-function selectOccasion(tile, name) {
-  document.querySelectorAll('.occasion-tile').forEach(t => t.classList.remove('selected'));
+// ═══════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════
+function selectOcc(tile) {
+  document.querySelectorAll('.occ-tile').forEach(t=>t.classList.remove('selected'));
   tile.classList.add('selected');
 }
-
-function toggleChip(chip) {
-  chip.classList.toggle('selected');
-}
-
-function startGeneration() {
+function startGen() {
   goTo('screen-loading');
-  const steps = [1, 2, 3, 4, 5];
-  steps.forEach((s, i) => {
+  [2,3,4,5].forEach((n,i) => {
     setTimeout(() => {
-      document.querySelectorAll('.loading-step').forEach((el, j) => {
-        el.classList.remove('active');
-        if (j < i) el.classList.add('done');
-        if (j === i) el.classList.add('active');
+      document.querySelectorAll('.load-step').forEach((s,j) => {
+        s.classList.remove('curr');
+        if (j<=i) s.classList.add('done'); else s.classList.remove('done');
+        if (j===i+1) s.classList.add('curr');
       });
-      if (i === steps.length - 1) {
-        setTimeout(() => { renderOutfits(); goTo('screen-outfits'); }, 600);
-      }
-    }, i * 900);
+      if (i===3) setTimeout(() => { buildOutfits(); goTo('screen-outfits'); }, 600);
+    }, i*800);
   });
 }
 
-// ══════════════════════════════════════
-// OUTFIT RESULTS
-// ══════════════════════════════════════
-function renderOutfits() {
-  const tabsEl = document.getElementById('outfit-tabs');
-  const bodyEl = document.getElementById('outfits-body');
-  tabsEl.innerHTML = '';
-  bodyEl.innerHTML = '';
+// ═══════════════════════════════════════
+// OUTFIT CAROUSEL
+// ═══════════════════════════════════════
+function buildOutfits() {
+  const track = document.getElementById('carousel-track');
+  const dots  = document.getElementById('carousel-dots');
+  track.innerHTML = '';
+  dots.innerHTML  = '';
+
   OUTFITS.forEach((outfit, idx) => {
-    const tab = document.createElement('button');
-    tab.className = 'outfit-tab' + (idx === 0 ? ' active' : '');
-    tab.textContent = outfit.name;
-    tab.onclick = () => switchOutfit(idx);
-    tabsEl.appendChild(tab);
-    const panel = document.createElement('div');
-    panel.className = 'outfit-panel' + (idx === 0 ? ' active' : '');
-    panel.id = `outfit-panel-${idx}`;
-    const swatchHtml = outfit.palette.map(c => `<div class="palette-swatch" style="background:${c}"></div>`).join('');
-    const slotsHtml = outfit.slots.map(slot => {
-      const item = CLOSET_ITEMS.find(i => i.id === slot.itemId);
-      return `<div class="outfit-slot">
-        <div class="slot-icon">${item.emoji}</div>
-        <div class="slot-info">
-          <div class="slot-type">${slot.type}</div>
-          <div class="slot-item">${item.name}</div>
-          <div class="slot-brand">${item.brand}</div>
+    // Build slide
+    const slide = document.createElement('div');
+    slide.className = 'outfit-slide';
+    slide.id = `slide-${idx}`;
+
+    // Flat lay content
+    let flatlayHtml;
+    if (outfit.flatlay) {
+      flatlayHtml = `
+        <div class="flatlay-img-wrap">
+          <img src="${outfit.flatlay}" alt="${outfit.name}" style="width:100%;max-height:380px;object-fit:cover;display:block"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+          <div style="display:none;background:#f5f2ed;min-height:280px">${buildComposite(outfit)}</div>
+          <div class="flatlay-caption">
+            <h3>${outfit.name}</h3>
+            <p>${outfit.flatlayCaption || ''}</p>
+          </div>
+        </div>`;
+    } else {
+      flatlayHtml = `
+        <div style="position:relative">
+          <div style="background:#f5f2ed;padding:20px 16px">
+            <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px">Outfit Composition</div>
+            ${buildComposite(outfit)}
+          </div>
+        </div>`;
+    }
+
+    // Avatar/model content
+    const avatarHtml = `
+      <div class="avatar-view-content">
+        <div class="avatar-model-wrap">
+          <img src="https://images.unsplash.com/photo-${outfit.modelPhoto}?w=600&h=700&fit=crop&crop=top&auto=format&q=75"
+            alt="Style inspiration"
+            onerror="this.src='https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=700&fit=crop&auto=format&q=75'" />
+          <div class="avatar-overlay">
+            <h3>${outfit.name}</h3>
+            <p>${outfit.paletteName} · ${outfit.occasion}</p>
+          </div>
         </div>
-        <div class="slot-color" style="background:${item.color}"></div>
+        <div style="padding:0 16px 12px">
+          <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Items in this look</div>
+          <div class="items-strip">
+            ${outfit.itemIds.map(id => {
+              const item = CLOSET.find(c=>c.id===id);
+              if (!item) return '';
+              return `<div class="strip-item">
+                <img class="strip-img" src="${photoUrl(item.imgId,150,150)}" alt="${item.name}"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy" />
+                <div class="strip-img-fallback" style="background:${item.color}22;display:none">${item.emoji}</div>
+                <div class="strip-label">${item.name.split(' ').slice(0,2).join(' ')}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+
+    // Slots
+    const slotsHtml = outfit.itemIds.map(id => {
+      const item = CLOSET.find(c=>c.id===id);
+      if (!item) return '';
+      return `<div class="slot-row">
+        <img src="${photoUrl(item.imgId,100,100)}" alt="${item.name}" style="width:48px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy" />
+        <div class="slot-emoji" style="background:${item.color}22;display:none">${item.emoji}</div>
+        <div class="slot-info-text">
+          <div class="slot-type-label">${item.cat}</div>
+          <div class="slot-item-name">${item.name}</div>
+          <div class="slot-brand-name">${item.brand}</div>
+        </div>
+        <div class="slot-color-swatch" style="background:${item.color}"></div>
       </div>`;
     }).join('');
+
     const gapHtml = outfit.gap ? `
-      <div class="slot-suggestion">
-        <div class="slot-icon">${outfit.gap.icon}</div>
-        <div class="slot-info">
-          <div class="slot-type">${outfit.gap.type} — Closet Gap</div>
-          <div class="slot-item">${outfit.gap.suggestion}</div>
+      <div class="slot-row gap">
+        <div class="slot-emoji">${outfit.gap.emoji}</div>
+        <div class="slot-info-text">
+          <div class="slot-type-label">${outfit.gap.type} — Closet Gap</div>
+          <div class="slot-item-name">${outfit.gap.text}</div>
         </div>
-        <button class="shop-btn">Shop</button>
+        <button class="gap-shop-btn">Shop</button>
       </div>` : '';
-    const suggestionsHtml = outfit.suggestions.map(s => `
-      <div class="suggestion-card">
-        <div class="s-image">${s.emoji}</div>
-        <div class="s-name">${s.name}</div>
-        <div class="s-brand">${s.brand}</div>
-        <div class="s-price">${s.price}</div>
-        <span class="tag" style="margin-bottom:10px;display:block">${s.tag}</span>
-        <button class="btn btn-secondary btn-full s-btn" style="font-size:12px">Shop This Look ↗</button>
-      </div>`).join('');
-    panel.innerHTML = `
-      <div class="outfit-palette-bar">${swatchHtml}</div>
-      <div class="palette-info">
-        <div class="palette-name">${outfit.name}</div>
-        <div class="occasion-badge">${outfit.occasion}</div>
+
+    const sugHtml = outfit.suggestions.length ? `
+      <div class="suggestions-section">
+        <h4>You Might Also Love</h4>
+        <div class="suggestion-row">
+          ${outfit.suggestions.map(s=>`
+            <div class="sug-card">
+              <img class="sug-img" src="${photoUrl(s.imgId,200,200)}" alt="${s.name}"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy" />
+              <div class="sug-img-fallback" style="display:none">${s.emoji}</div>
+              <div class="sug-name">${s.name}</div>
+              <div class="sug-brand">${s.brand}</div>
+              <div class="sug-price">${s.price}</div>
+              <div class="sug-tag">${s.tag}</div>
+              <button class="sug-btn">Shop This Look ↗</button>
+            </div>`).join('')}
+        </div>
+      </div>` : '';
+
+    const paletteDotsHtml = outfit.palette.map(c=>`<div class="palette-dot" style="background:${c}"></div>`).join('');
+
+    slide.innerHTML = `
+      <div class="outfit-view-toggle">
+        <button class="view-tab active" onclick="switchView(${idx},'flatlay',this)">🖼 Flat Lay</button>
+        <button class="view-tab" onclick="switchView(${idx},'avatar',this)">👤 On You</button>
       </div>
-      <div class="styling-note">${outfit.note}</div>
-      <div class="outfit-slots">${slotsHtml}${gapHtml}</div>
-      ${outfit.suggestions.length ? `<div class="suggestion-section"><h3>You Might Also Love</h3><div class="suggestion-cards">${suggestionsHtml}</div></div>` : ''}`;
-    bodyEl.appendChild(panel);
+
+      <div id="flatlay-${idx}" class="flatlay-view active">
+        ${flatlayHtml}
+        <div class="outfit-meta-bar">
+          <div>
+            <div class="palette-dots">${paletteDotsHtml}</div>
+            <div class="palette-name-label">${outfit.paletteName}</div>
+          </div>
+          <div class="outfit-meta-right">
+            <div class="occ-tag">${outfit.occasion}</div>
+          </div>
+        </div>
+        <div class="styling-note">${outfit.note}</div>
+        <div class="slots-section">
+          <h4>Outfit Pieces</h4>
+          ${slotsHtml}${gapHtml}
+        </div>
+        ${sugHtml}
+      </div>
+
+      <div id="avatar-${idx}" class="avatar-view">
+        ${avatarHtml}
+        <div class="styling-note">${outfit.note}</div>
+        ${sugHtml}
+      </div>`;
+
+    track.appendChild(slide);
+
+    // Dot
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (idx===0?' active':'');
+    dot.onclick = () => scrollToSlide(idx);
+    dots.appendChild(dot);
   });
+
+  // Scroll listener → update dots
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / track.offsetWidth);
+    document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+  }, { passive: true });
+
+  // Hide swipe hint after 3s
+  setTimeout(() => {
+    const hint = document.getElementById('swipe-hint');
+    if (hint) hint.style.opacity = '0';
+  }, 3000);
 }
 
-function switchOutfit(idx) {
-  document.querySelectorAll('.outfit-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-  document.querySelectorAll('.outfit-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+function buildComposite(outfit) {
+  return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    ${outfit.itemIds.slice(0,6).map(id => {
+      const item = CLOSET.find(c=>c.id===id);
+      if (!item) return '';
+      return `<div style="background:#fff;border-radius:8px;overflow:hidden;text-align:center">
+        <img src="${photoUrl(item.imgId,200,200)}" alt="${item.name}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy" />
+        <div style="display:none;width:100%;aspect-ratio:1;background:${item.color}22;align-items:center;justify-content:center;font-size:28px">${item.emoji}</div>
+        <div style="font-size:10px;color:#888;padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.cat}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
 }
 
-// ══════════════════════════════════════
+function switchView(idx, view, btn) {
+  document.querySelectorAll(`#slide-${idx} .view-tab`).forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`flatlay-${idx}`).classList.toggle('active', view==='flatlay');
+  document.getElementById(`avatar-${idx}`).classList.toggle('active', view==='avatar');
+}
+
+function scrollToSlide(idx) {
+  const track = document.getElementById('carousel-track');
+  track.scrollTo({ left: idx * track.offsetWidth, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════
 // INIT
-// ══════════════════════════════════════
+// ═══════════════════════════════════════
 renderBrands();
 renderCloset();
 </script>
-
 </body>
 </html>
