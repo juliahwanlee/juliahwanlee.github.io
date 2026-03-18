@@ -86,45 +86,43 @@
     .context-chip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border-radius: 20px; font-size: 12px; font-weight: 500; }
     .occasion-select { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); font-size: 12px; font-weight: 500; background: var(--white); cursor: pointer; }
 
-    .carousel-wrapper { flex: 1; position: relative; overflow: hidden; }
-    .carousel-track {
-      display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    /* OUTFIT TABS */
+    .outfits-header {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
     }
-    .carousel-track::-webkit-scrollbar { display: none; }
-    .carousel-slide {
-      flex: 0 0 100%; scroll-snap-align: start; height: 100%; overflow-y: auto;
-      padding: 16px; display: flex; flex-direction: column; gap: 16px;
+    .outfits-header h2 { font-size: 18px; font-weight: 700; color: var(--navy); }
+    .outfits-header .regen-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 6px 12px; border-radius: 5px; font-size: 13px; cursor: pointer; transition: all 0.15s;
     }
-
-    .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px; background: var(--white); border-top: 1px solid var(--border); }
-    .carousel-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--white); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-    .carousel-arrow:hover { background: var(--blue); color: white; border-color: var(--blue); }
-    .carousel-dots { display: flex; gap: 6px; }
-    .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.2s; cursor: pointer; }
-    .carousel-dot.active { background: var(--blue); width: 24px; border-radius: 4px; }
-
-    /* OUTFIT CARD */
-    .outfit-card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .outfit-card-header { padding: 14px 16px; border-bottom: 1px solid var(--border); }
-    .outfit-card-title { font-size: 15px; font-weight: 700; }
-    .outfit-card-occasion { font-size: 11px; color: var(--blue); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .outfits-header .regen-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .outfit-tabs { display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto; background: var(--white); border-bottom: 1px solid var(--border); }
+    .outfit-tab {
+      padding: 8px 16px; border-radius: 6px 6px 0 0; font-size: 13px; font-weight: 500;
+      cursor: pointer; color: var(--muted); border: 1px solid transparent;
+      border-bottom: none; white-space: nowrap; background: none; transition: all 0.15s;
+    }
+    .outfit-tab.active { color: var(--blue); border-color: var(--border); border-bottom: 1px solid var(--white); background: var(--white); margin-bottom: -1px; }
+    .outfits-body { max-width: 700px; margin: 0 auto; padding: 24px 24px 100px; }
+    .outfit-panel { display: none; }
+    .outfit-panel.active { display: block; }
 
     /* FLAT LAY IMAGE */
     .flatlay-img { width: 100%; display: block; }
 
     /* PALETTE BAR */
-    .outfit-palette-bar { display: flex; gap: 0; border-radius: 8px; overflow: hidden; margin: 16px 16px 0; height: 44px; }
+    .outfit-palette-bar { display: flex; gap: 0; border-radius: 8px; overflow: hidden; height: 44px; margin-bottom: 16px; }
     .palette-swatch { flex: 1; }
-    .palette-info { display: flex; align-items: center; justify-content: space-between; margin: 12px 16px 0; }
+    .palette-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .palette-name { font-size: 16px; font-weight: 700; color: var(--navy); }
     .occasion-badge { font-size: 12px; padding: 3px 10px; border-radius: 10px; background: var(--blue-light); color: var(--blue); font-weight: 500; }
 
     /* STYLING NOTE */
-    .styling-note { font-size: 13px; color: #555; line-height: 1.6; padding: 14px; margin: 12px 16px 0; background: var(--white); border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0; font-style: italic; }
+    .styling-note { font-size: 13px; color: #555; line-height: 1.6; padding: 14px; margin-bottom: 16px; background: var(--white); border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0; font-style: italic; }
 
     /* OUTFIT SLOTS */
-    .outfit-slots { display: flex; flex-direction: column; gap: 8px; margin: 16px 16px 0; }
+    .outfit-slots { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
     .outfit-slot {
       background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
       display: flex; align-items: center; gap: 12px; padding: 10px 12px;
@@ -146,7 +144,7 @@
     .shop-btn { font-size: 12px; padding: 4px 10px; background: #f0a040; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; white-space: nowrap; }
 
     /* PRODUCT SUGGESTIONS SECTION */
-    .suggestion-section { margin: 16px 16px 0; }
+    .suggestion-section { margin-bottom: 16px; }
     .suggestion-section h3 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
     .suggestion-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .suggestion-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
@@ -176,8 +174,6 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { margin-top: 16px; font-size: 14px; color: var(--muted); font-weight: 500; }
 
-    /* SWIPE HINT */
-    .swipe-hint { text-align: center; font-size: 12px; color: var(--muted); padding: 4px; }
   </style>
 </head>
 <body>
@@ -266,24 +262,13 @@
 
   <!-- OUTFITS VIEW -->
   <div id="view-outfits" style="flex:1; display:none; flex-direction:column; overflow:hidden;">
-    <div class="outfit-context">
-      <div class="context-row">
-        <div class="context-chip">&#127780;&#65039; 72°F Atlanta</div>
-        <div class="context-chip">&#128197; Monday</div>
-        <select class="occasion-select" id="occasion-select">
-          <option>Work</option><option>Casual</option><option>Evening</option><option>Weekend</option>
-        </select>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="generateOutfits()">&#8635; Regenerate</button>
-      </div>
+    <div class="outfits-header">
+      <h2>Your Outfits</h2>
+      <button class="regen-btn" onclick="generateOutfits()">&#8635; Regenerate</button>
     </div>
-    <div class="swipe-hint" id="swipe-hint">&#8592; Swipe left & right to browse outfits &#8594;</div>
-    <div class="carousel-wrapper">
-      <div class="carousel-track" id="carousel-track"></div>
-    </div>
-    <div class="carousel-nav">
-      <button class="carousel-arrow" onclick="carouselPrev()">&#8249;</button>
-      <div class="carousel-dots" id="carousel-dots"></div>
-      <button class="carousel-arrow" onclick="carouselNext()">&#8250;</button>
+    <div class="outfit-tabs" id="outfit-tabs"></div>
+    <div style="flex:1; overflow-y:auto;">
+      <div class="outfits-body" id="outfits-body"></div>
     </div>
   </div>
 </div>
@@ -558,7 +543,6 @@ const outfits = [
 
 const categories = ['all','tops','outerwear','bottoms','shoes','bags','accessories'];
 let currentCategory = 'all';
-let currentSlide = 0;
 let bannerDismissed = false;
 
 function showAuthTab(tab) {
@@ -621,17 +605,26 @@ function generateOutfits() {
   setTimeout(() => {
     document.getElementById('loading').style.display = 'none';
     showView('outfits');
-    renderCarousel();
+    renderOutfits();
   }, 1500);
 }
 
-// ---- Carousel ----
-function renderCarousel() {
-  const track = document.getElementById('carousel-track');
-  const dots = document.getElementById('carousel-dots');
+// ---- Outfit Tabs ----
+function renderOutfits() {
+  const tabsEl = document.getElementById('outfit-tabs');
+  const bodyEl = document.getElementById('outfits-body');
+  tabsEl.innerHTML = '';
+  bodyEl.innerHTML = '';
 
-  track.innerHTML = outfits.map((outfit, idx) => {
-    // Build item slots
+  outfits.forEach((outfit, idx) => {
+    // Tab
+    const tab = document.createElement('button');
+    tab.className = 'outfit-tab' + (idx === 0 ? ' active' : '');
+    tab.textContent = outfit.name;
+    tab.onclick = () => switchOutfit(idx);
+    tabsEl.appendChild(tab);
+
+    // Panel
     const slotsHtml = outfit.items.map(itemId => {
       const item = closetItems.find(i => i.id === itemId);
       if (!item) return '';
@@ -646,7 +639,16 @@ function renderCarousel() {
       </div>`;
     }).join('');
 
-    // Build suggestions
+    const gapHtml = outfit.gap ? `
+      <div class="slot-suggestion">
+        <div style="font-size:24px; width:48px; text-align:center;">${outfit.gap.icon}</div>
+        <div class="slot-info">
+          <div class="slot-type">${outfit.gap.type} — Closet Gap</div>
+          <div class="slot-item">${outfit.gap.suggestion}</div>
+        </div>
+        <button class="shop-btn">Shop</button>
+      </div>` : '';
+
     const suggestions = outfit.suggestions || [];
     const suggestionsHtml = suggestions.length ? `
       <div class="suggestion-section">
@@ -664,88 +666,29 @@ function renderCarousel() {
         </div>
       </div>` : '';
 
-    // Build gap slot
-    const gapHtml = outfit.gap ? `
-      <div class="slot-suggestion">
-        <div style="font-size:24px; width:48px; text-align:center;">${outfit.gap.icon}</div>
-        <div class="slot-info">
-          <div class="slot-type">${outfit.gap.type} — Closet Gap</div>
-          <div class="slot-item">${outfit.gap.suggestion}</div>
-        </div>
-        <button class="shop-btn">Shop</button>
-      </div>` : '';
-
-    return `
-    <div class="carousel-slide" data-idx="${idx}">
-      <div class="outfit-card">
-        <div class="outfit-card-header">
-          <div class="outfit-card-title">Look ${idx+1} of ${outfits.length}</div>
-          <div class="outfit-card-occasion">${outfit.occasion}</div>
-        </div>
-
-        <img class="flatlay-img" src="${outfit.image}" alt="${outfit.caption}" loading="lazy" />
-
-        <div class="outfit-palette-bar">
-          ${outfit.palette.map(c => `<div class="palette-swatch" style="background:${c}"></div>`).join('')}
-        </div>
-        <div class="palette-info">
-          <div class="palette-name">${outfit.name}</div>
-          <div class="occasion-badge">${outfit.occasion}</div>
-        </div>
-
-        <div class="styling-note">${outfit.note}</div>
-
-        <div class="outfit-slots">
-          ${slotsHtml}
-          ${gapHtml}
-        </div>
-
-        ${suggestionsHtml}
-
-        <div style="height:20px"></div>
+    const panel = document.createElement('div');
+    panel.className = 'outfit-panel' + (idx === 0 ? ' active' : '');
+    panel.id = `outfit-panel-${idx}`;
+    panel.innerHTML = `
+      <img class="flatlay-img" src="${outfit.image}" alt="${outfit.caption}" loading="lazy" style="border-radius:8px; margin-bottom:16px;" />
+      <div class="outfit-palette-bar">
+        ${outfit.palette.map(c => `<div class="palette-swatch" style="background:${c}"></div>`).join('')}
       </div>
-    </div>`;
-  }).join('');
-
-  dots.innerHTML = outfits.map((_, i) =>
-    `<span class="carousel-dot ${i===0?'active':''}" onclick="goToSlide(${i})"></span>`
-  ).join('');
-
-  currentSlide = 0;
-  track.scrollLeft = 0;
-
-  // Sync dots on scroll
-  track.addEventListener('scroll', () => {
-    const slideWidth = track.offsetWidth;
-    const newSlide = Math.round(track.scrollLeft / slideWidth);
-    if (newSlide !== currentSlide) {
-      currentSlide = newSlide;
-      updateDots();
-    }
+      <div class="palette-info">
+        <div class="palette-name">${outfit.name}</div>
+        <div class="occasion-badge">${outfit.occasion}</div>
+      </div>
+      <div class="styling-note">${outfit.note}</div>
+      <div class="outfit-slots">${slotsHtml}${gapHtml}</div>
+      ${suggestionsHtml}`;
+    bodyEl.appendChild(panel);
   });
 }
 
-function updateDots() {
-  document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+function switchOutfit(idx) {
+  document.querySelectorAll('.outfit-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.outfit-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
 }
-
-function goToSlide(idx) {
-  const track = document.getElementById('carousel-track');
-  track.scrollTo({ left: idx * track.offsetWidth, behavior: 'smooth' });
-  currentSlide = idx;
-  updateDots();
-}
-
-function carouselPrev() { goToSlide(Math.max(0, currentSlide - 1)); }
-function carouselNext() { goToSlide(Math.min(outfits.length - 1, currentSlide + 1)); }
-
-// ---- Keyboard navigation ----
-document.addEventListener('keydown', e => {
-  if (document.getElementById('view-outfits').style.display === 'flex') {
-    if (e.key === 'ArrowLeft') carouselPrev();
-    if (e.key === 'ArrowRight') carouselNext();
-  }
-});
 
 // Init
 renderCloset();
