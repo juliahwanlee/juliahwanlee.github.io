@@ -110,49 +110,52 @@
     .outfit-card-title { font-size: 15px; font-weight: 700; }
     .outfit-card-occasion { font-size: 11px; color: var(--blue); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
-    /* VIEW TOGGLE */
-    .view-toggle { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); margin: 0 16px; }
-    .view-toggle-btn { flex: 1; padding: 8px; font-size: 12px; font-weight: 600; text-align: center; cursor: pointer; background: var(--white); border: none; color: var(--muted); transition: all 0.15s; }
-    .view-toggle-btn.active { background: var(--blue); color: white; }
+    /* FLAT LAY IMAGE */
+    .flatlay-img { width: 100%; display: block; }
 
-    /* FLAT LAY VIEW */
-    .flatlay-view { position: relative; }
-    .flatlay-img { width: 100%; display: block; border-radius: 0; }
-    .palette-strip { display: flex; padding: 12px 16px; gap: 8px; align-items: center; }
-    .palette-swatch { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
-    .palette-name { font-size: 12px; font-weight: 600; color: var(--muted); margin-left: 8px; }
+    /* PALETTE BAR */
+    .outfit-palette-bar { display: flex; gap: 0; border-radius: 8px; overflow: hidden; margin: 16px 16px 0; height: 44px; }
+    .palette-swatch { flex: 1; }
+    .palette-info { display: flex; align-items: center; justify-content: space-between; margin: 12px 16px 0; }
+    .palette-name { font-size: 16px; font-weight: 700; color: var(--navy); }
+    .occasion-badge { font-size: 12px; padding: 3px 10px; border-radius: 10px; background: var(--blue-light); color: var(--blue); font-weight: 500; }
 
-    /* AVATAR VIEW */
-    .avatar-view { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .avatar-outfit-display { position: relative; width: 260px; height: 400px; }
-    .avatar-silhouette { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
-    .avatar-slot { position: absolute; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 2px solid white; }
-    .avatar-slot img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar-slot-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; font-size: 9px; padding: 2px 4px; text-align: center; font-weight: 600; }
+    /* STYLING NOTE */
+    .styling-note { font-size: 13px; color: #555; line-height: 1.6; padding: 14px; margin: 12px 16px 0; background: var(--white); border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0; font-style: italic; }
 
-    /* ITEMS VIEW */
-    .items-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 16px; }
-    .outfit-item-card { background: var(--bg); border-radius: 8px; overflow: hidden; text-align: center; }
-    .outfit-item-img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-    .outfit-item-placeholder { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 28px; }
-    .outfit-item-label { padding: 6px; font-size: 10px; font-weight: 600; line-height: 1.2; }
-    .outfit-item-slot { font-size: 9px; color: var(--blue); font-weight: 700; text-transform: uppercase; }
+    /* OUTFIT SLOTS */
+    .outfit-slots { display: flex; flex-direction: column; gap: 8px; margin: 16px 16px 0; }
+    .outfit-slot {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    }
+    .slot-img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+    .slot-info { flex: 1; }
+    .slot-type { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .slot-item { font-size: 14px; font-weight: 500; color: var(--text); }
+    .slot-brand { font-size: 12px; color: var(--muted); }
+    .slot-color { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
 
-    /* SUGGESTION */
-    .suggestion-strip { padding: 12px 16px; background: linear-gradient(90deg, #fef9f0, #fff5f5); border-top: 1px solid #f0e6d6; }
-    .suggestion-label { font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-    .suggestion-items { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
-    .suggestion-card { flex: 0 0 120px; background: var(--white); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-    .suggestion-card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-    .suggestion-info { padding: 6px; }
-    .suggestion-info .name { font-size: 10px; font-weight: 600; }
-    .suggestion-info .price { font-size: 10px; color: var(--green); font-weight: 700; }
-    .suggestion-info .shop-link { font-size: 9px; color: var(--blue); font-weight: 600; cursor: pointer; }
+    /* CLOSET GAP / SUGGESTION SLOT */
+    .slot-suggestion {
+      background: #fff9f0; border: 1px dashed #f0a040; border-radius: var(--radius);
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    }
+    .slot-suggestion .slot-type { color: #b36000; }
+    .slot-suggestion .slot-item { color: #b36000; }
+    .shop-btn { font-size: 12px; padding: 4px 10px; background: #f0a040; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; white-space: nowrap; }
 
-    /* STYLE NOTE */
-    .style-note { margin: 0 16px 12px; padding: 12px; background: var(--blue-light); border-radius: 8px; }
-    .style-note-label { font-size: 10px; font-weight: 700; color: var(--blue); text-transform: uppercase; margin-bottom: 4px; }
-    .style-note p { font-size: 12px; color: var(--text); line-height: 1.4; }
+    /* PRODUCT SUGGESTIONS SECTION */
+    .suggestion-section { margin: 16px 16px 0; }
+    .suggestion-section h3 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .suggestion-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .suggestion-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+    .suggestion-card .s-image { width: 100%; aspect-ratio: 1; border-radius: 6px; object-fit: cover; margin-bottom: 8px; }
+    .suggestion-card .s-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .suggestion-card .s-brand { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .suggestion-card .s-price { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .suggestion-card .s-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: var(--blue-light); color: var(--blue); font-weight: 500; display: inline-block; margin-bottom: 8px; }
+    .suggestion-card .s-btn { width: 100%; text-align: center; font-size: 12px; }
 
     /* RESPONSIVE */
     @media (min-width: 768px) {
@@ -392,112 +395,162 @@ const outfits = [
     image:'images/outfits/IMG_5717.PNG', occasion:'Work',
     palette:['#6B4226','#D4B89C','#F0EBE0','#8B6914','#4A3728'],
     items:['t1','b1','s1','bg1'],
-    note:'A rich brown wrap cardigan anchors this look. The printed wide-leg pants add visual interest while keeping the palette cohesive.'
+    note:'A rich brown wrap cardigan anchors this look. The printed wide-leg pants add visual interest while keeping the palette cohesive.',
+    gap: { type:'Necklace', suggestion:'Add a gold pendant to complete the look', icon:'📿' },
+    suggestions: [
+      { name:'Cashmere Wrap Scarf', brand:'COS', price:'$89', tag:'Palette Extension' },
+      { name:'Brown Leather Belt', brand:'Mango', price:'$45', tag:'Complete the Look' },
+    ]
   },
   {
     id:2, name:'Neutral Layers', caption:'Effortless neutral layering for everyday elegance',
     image:'images/outfits/IMG_5718.PNG', occasion:'Casual',
     palette:['#C8B99A','#6B7C5E','#2C3E50','#F0EBE0','#D4CBBA'],
     items:['t3','t2','b2','s2','bg2','a2'],
-    note:'Layer the oatmeal cardigan over the olive tank for a relaxed but polished weekend look. Silver earrings keep it understated.'
+    note:'Layer the oatmeal cardigan over the olive tank for a relaxed but polished weekend look. Silver earrings keep it understated.',
+    suggestions: [
+      { name:'Canvas Tote Bag', brand:'Everlane', price:'$68', tag:'Palette Match' },
+    ]
   },
   {
     id:3, name:'Cream & Denim', caption:'Effortless neutral style for everyday elegance',
     image:'images/outfits/IMG_5721.PNG', occasion:'Work',
     palette:['#F0EBE0','#7BA3C9','#6B4226','#D4A017','#5B7FA5'],
     items:['o1','t4','b3','s3','bg3','a3','a1','a5'],
-    note:'The oversized cream blazer elevates simple denim. Blue ballet flats echo the jeans while the gold accessories add warmth.'
+    note:'The oversized cream blazer elevates simple denim. Blue ballet flats echo the jeans while the gold accessories add warmth.',
+    suggestions: [
+      { name:'Cream Structured Bag', brand:'Polene', price:'$350', tag:'Palette Extension' },
+      { name:'Blue Silk Scarf', brand:'& Other Stories', price:'$39', tag:'Color Echo' },
+    ]
   },
   {
     id:4, name:'Deep Tones', caption:'Effortless elegance in deep tones',
     image:'images/outfits/IMG_5724.PNG', occasion:'Work',
     palette:['#8B2252','#1B3A6B','#5C1A2A','#D4A017','#4A3728'],
     items:['o2','b4','s4','bg4','a4','a1'],
-    note:'The boucle tweed jacket brings Parisian flair. Paired with navy trousers and a burgundy Kelly bag for rich, sophisticated contrast.'
+    note:'The boucle tweed jacket brings Parisian flair. Paired with navy trousers and a burgundy Kelly bag for rich, sophisticated contrast.',
+    suggestions: [
+      { name:'Navy Cashmere Scarf', brand:'J.Crew', price:'$78', tag:'Palette Match' },
+    ]
   },
   {
     id:5, name:'Muted Greens', caption:'Muted greens & warm neutrals',
     image:'images/outfits/IMG_5725.PNG', occasion:'Work',
     palette:['#6B7C5E','#F5E6A8','#D4CBBA','#C09A6B','#6B4226'],
     items:['o3','t5','b5','s5','bg5','a5'],
-    note:'Sage green meets warm neutrals. The yellow knit tank adds a subtle pop against the structured blazer.'
+    note:'Sage green meets warm neutrals. The yellow knit tank adds a subtle pop against the structured blazer.',
+    gap: { type:'Earrings', suggestion:'Add gold statement earrings', icon:'✨' },
+    suggestions: [
+      { name:'Gold Chain Necklace', brand:'Mejuri', price:'$98', tag:'Accessory Gap' },
+    ]
   },
   {
     id:6, name:'Soft Neutrals', caption:'Soft neutrals, elevated ease',
     image:'images/outfits/IMG_5726.PNG', occasion:'Casual',
     palette:['#4A3728','#D4CBBA','#F0EBE0','#C8B99A','#6B4226'],
     items:['t6','b6','s6','bg6','a3','a1','a6'],
-    note:'The dark brown knit mini dress over cream trousers creates an effortless layered look. Adidas Sambas keep it modern.'
+    note:'The dark brown knit mini dress over cream trousers creates an effortless layered look. Adidas Sambas keep it modern.',
+    suggestions: [
+      { name:'Beige Canvas Belt', brand:'COS', price:'$55', tag:'Complete the Look' },
+    ]
   },
   {
     id:7, name:'Rich Neutrals', caption:'Timeless layers in rich neutrals',
     image:'images/outfits/IMG_5727.PNG', occasion:'Work',
     palette:['#C09A6B','#555555','#FFFFFF','#8B5E3C','#8E8E8E'],
     items:['o4','t7','t8','b7','s7','bg7','a1','a7'],
-    note:'Classic camel trench over a grey sweater and white shirt. Cognac accessories tie the warm and cool tones together.'
+    note:'Classic camel trench over a grey sweater and white shirt. Cognac accessories tie the warm and cool tones together.',
+    suggestions: [
+      { name:'Wool Fedora Hat', brand:'& Other Stories', price:'$59', tag:'Palette Extension' },
+      { name:'Cognac Leather Gloves', brand:'COS', price:'$89', tag:'Color Match' },
+    ]
   },
   {
     id:8, name:'Soft Tones', caption:'Soft tones, strong presence',
     image:'images/outfits/IMG_5728.PNG', occasion:'Evening',
     palette:['#C09A6B','#7EB3D6','#6B4226','#A8C8E0','#D4A017'],
     items:['o5','t9','b8','s8','bg8','a1','a9'],
-    note:'The blue cable knit paired with a camel pleated skirt creates a striking contrast. The light blue bag echoes the sweater.'
+    note:'The blue cable knit paired with a camel pleated skirt creates a striking contrast. The light blue bag echoes the sweater.',
+    suggestions: [
+      { name:'Blue Statement Ring', brand:'Mejuri', price:'$68', tag:'Color Echo' },
+    ]
   },
   {
     id:9, name:'Deep Tones II', caption:'Effortless elegance in deep tones',
     image:'images/outfits/IMG_5729.PNG', occasion:'Work',
     palette:['#8B2252','#1B3A6B','#5C1A2A','#D4A017','#4A3728'],
     items:['o2','b4','s4','bg4','a4','a1'],
-    note:'A refined variation of the boucle jacket look. The burgundy and navy combination exudes quiet confidence.'
+    note:'A refined variation of the boucle jacket look. The burgundy and navy combination exudes quiet confidence.',
+    suggestions: []
   },
   {
     id:10, name:'Burgundy Elevated', caption:'Burgundy elegance, elevated',
     image:'images/outfits/IMG_5730.PNG', occasion:'Work',
     palette:['#5C1A2A','#F0EBE0','#7BA3C9','#6B4226','#D4A017'],
     items:['o6','t13','b3','s9','bg9','a7','a1'],
-    note:'The burgundy blazer over a cream-blue colorblock sweater creates depth. The Bottega Veneta hobo adds luxurious texture.'
+    note:'The burgundy blazer over a cream-blue colorblock sweater creates depth. The Bottega Veneta hobo adds luxurious texture.',
+    suggestions: [
+      { name:'Burgundy Silk Pocket Square', brand:'Drake\'s', price:'$75', tag:'Palette Match' },
+    ]
   },
   {
     id:11, name:'Timeless Mood', caption:'Refined neutrals, timeless mood',
     image:'images/outfits/IMG_5731.PNG', occasion:'Work',
     palette:['#C8B99A','#5C3A1E','#2C3E50','#6B4226','#D4A017'],
     items:['o7','t10','b2','s10','bg10','a9','a1'],
-    note:'The beige blazer grounds a warm chocolate sweater and dark jeans. A silk scarf adds personality to this polished look.'
+    note:'The beige blazer grounds a warm chocolate sweater and dark jeans. A silk scarf adds personality to this polished look.',
+    suggestions: [
+      { name:'Chocolate Leather Clutch', brand:'Massimo Dutti', price:'$89', tag:'Complete the Look' },
+    ]
   },
   {
     id:12, name:'Smart Casual', caption:'Effortless smart casual, redefined',
     image:'images/outfits/IMG_5732.PNG', occasion:'Casual',
     palette:['#1B3A6B','#C09A6B','#6B4226','#C0C0C0','#D4A017'],
     items:['t11','b11','s11','bg11','a8','a7'],
-    note:'Navy cardigan meets camel trousers for a relaxed but put-together look. New Balance 530s and a baseball cap add sporty edge.'
+    note:'Navy cardigan meets camel trousers for a relaxed but put-together look. New Balance 530s and a baseball cap add sporty edge.',
+    suggestions: [
+      { name:'Navy Canvas Weekender', brand:'Herschel', price:'$110', tag:'Palette Match' },
+    ]
   },
   {
     id:13, name:'Elevated Everyday', caption:'Elevated everyday style',
     image:'images/outfits/IMG_5733.PNG', occasion:'Work',
     palette:['#8B6914','#FFFFFF','#2C3E50','#6B4226','#C09A6B'],
     items:['o8','t8','b12','s12','bg12','a1','a11'],
-    note:'The suede blazer transforms a simple white shirt and jeans into a statement. Gucci-style loafers elevate the whole look.'
+    note:'The suede blazer transforms a simple white shirt and jeans into a statement. Gucci-style loafers elevate the whole look.',
+    suggestions: [
+      { name:'Tan Leather Watch Strap', brand:'Daniel Wellington', price:'$45', tag:'Accessory Gap' },
+      { name:'Suede Weekender Bag', brand:'Mango', price:'$129', tag:'Material Match' },
+    ]
   },
   {
     id:14, name:'Quiet Luxury', caption:'Burgundy + grey = quiet luxury done right',
     image:'images/outfits/IMG_5734.PNG', occasion:'Casual',
     palette:['#9E9E9E','#5C1A2A','#4A3728','#6B4226','#D4A017'],
     items:['o9','b9','s13','bg13','a10','a1'],
-    note:'Grey wool coat over a burgundy midi skirt — classic quiet luxury. The burgundy scarf and brown Sambas complete the autumnal palette.'
+    note:'Grey wool coat over a burgundy midi skirt — classic quiet luxury. The burgundy scarf and brown Sambas complete the autumnal palette.',
+    suggestions: [
+      { name:'Wool Beret', brand:'& Other Stories', price:'$35', tag:'Palette Extension' },
+    ]
   },
   {
     id:15, name:'Sporty Neutrals', caption:'Sporty meets soft neutrals',
     image:'images/outfits/IMG_5735.PNG', occasion:'Casual',
     palette:['#D4CBBA','#1B3A6B','#6B4226','#F0EBE0','#C0C0C0'],
     items:['t14','t15','b13','s11','bg14','a8','a1'],
-    note:'The matching knit set is elevated with a white tee and navy layers. The Longchamp mini bag is the perfect casual companion.'
+    note:'The matching knit set is elevated with a white tee and navy layers. The Longchamp mini bag is the perfect casual companion.',
+    suggestions: []
   },
   {
     id:16, name:'Chocolate & Black', caption:'Where chocolate tones meet timeless black elegance',
     image:'images/outfits/IMG_5736.PNG', occasion:'Work',
     palette:['#A0998F','#5C3A1E','#1A1A1A','#D4A017','#6B4226'],
     items:['o10','t12','b10','s14','bg15','a1','a3'],
-    note:'The plaid blazer adds pattern without overwhelming. Chocolate and black create a sophisticated tonal story.'
+    note:'The plaid blazer adds pattern without overwhelming. Chocolate and black create a sophisticated tonal story.',
+    suggestions: [
+      { name:'Black Leather Gloves', brand:'COS', price:'$69', tag:'Complete the Look' },
+    ]
   }
 ];
 
@@ -577,53 +630,82 @@ function renderCarousel() {
   const track = document.getElementById('carousel-track');
   const dots = document.getElementById('carousel-dots');
 
-  track.innerHTML = outfits.map((outfit, idx) => `
+  track.innerHTML = outfits.map((outfit, idx) => {
+    // Build item slots
+    const slotsHtml = outfit.items.map(itemId => {
+      const item = closetItems.find(i => i.id === itemId);
+      if (!item) return '';
+      return `<div class="outfit-slot">
+        <img class="slot-img" src="images/closet/${item.id}.jpg" alt="${item.name}" />
+        <div class="slot-info">
+          <div class="slot-type">${item.category}</div>
+          <div class="slot-item">${item.name}</div>
+          <div class="slot-brand">${item.brand}</div>
+        </div>
+        <div class="slot-color" style="background:${item.color}"></div>
+      </div>`;
+    }).join('');
+
+    // Build suggestions
+    const suggestions = outfit.suggestions || [];
+    const suggestionsHtml = suggestions.length ? `
+      <div class="suggestion-section">
+        <h3>You Might Also Love</h3>
+        <div class="suggestion-cards">
+          ${suggestions.map(s => `
+            <div class="suggestion-card">
+              <div class="s-name">${s.name}</div>
+              <div class="s-brand">${s.brand}</div>
+              <div class="s-price">${s.price}</div>
+              <div class="s-tag">${s.tag}</div>
+              <button class="btn btn-secondary s-btn">Shop This Look</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>` : '';
+
+    // Build gap slot
+    const gapHtml = outfit.gap ? `
+      <div class="slot-suggestion">
+        <div style="font-size:24px; width:48px; text-align:center;">${outfit.gap.icon}</div>
+        <div class="slot-info">
+          <div class="slot-type">${outfit.gap.type} — Closet Gap</div>
+          <div class="slot-item">${outfit.gap.suggestion}</div>
+        </div>
+        <button class="shop-btn">Shop</button>
+      </div>` : '';
+
+    return `
     <div class="carousel-slide" data-idx="${idx}">
       <div class="outfit-card">
         <div class="outfit-card-header">
-          <div class="outfit-card-title">${outfit.name}</div>
-          <div class="outfit-card-occasion">${outfit.occasion} · Look ${idx+1} of ${outfits.length}</div>
+          <div class="outfit-card-title">Look ${idx+1} of ${outfits.length}</div>
+          <div class="outfit-card-occasion">${outfit.occasion}</div>
         </div>
 
-        <div class="view-toggle" style="margin:12px 0;">
-          <button class="view-toggle-btn active" onclick="toggleOutfitView(${idx},'flatlay')">Flat Lay</button>
-          <button class="view-toggle-btn" onclick="toggleOutfitView(${idx},'items')">Items</button>
+        <img class="flatlay-img" src="${outfit.image}" alt="${outfit.caption}" loading="lazy" />
+
+        <div class="outfit-palette-bar">
+          ${outfit.palette.map(c => `<div class="palette-swatch" style="background:${c}"></div>`).join('')}
+        </div>
+        <div class="palette-info">
+          <div class="palette-name">${outfit.name}</div>
+          <div class="occasion-badge">${outfit.occasion}</div>
         </div>
 
-        <div id="outfit-flatlay-${idx}">
-          <img class="flatlay-img" src="${outfit.image}" alt="${outfit.caption}" loading="lazy" />
+        <div class="styling-note">${outfit.note}</div>
+
+        <div class="outfit-slots">
+          ${slotsHtml}
+          ${gapHtml}
         </div>
 
-        <div id="outfit-items-${idx}" style="display:none;">
-          <div class="items-grid">
-            ${outfit.items.map(itemId => {
-              const item = closetItems.find(i => i.id === itemId);
-              if (!item) return '';
-              return `
-                <div class="outfit-item-card">
-                  <img class="outfit-item-img" src="images/closet/${item.id}.jpg" alt="${item.name}" loading="lazy" />
-                  <div class="outfit-item-label">
-                    <div class="outfit-item-slot">${item.category}</div>
-                    ${item.name}
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
+        ${suggestionsHtml}
 
-        <div class="palette-strip">
-          ${outfit.palette.map(c => `<span class="palette-swatch" style="background:${c}"></span>`).join('')}
-          <span class="palette-name">${outfit.name}</span>
-        </div>
-
-        <div class="style-note">
-          <div class="style-note-label">Styling Note</div>
-          <p>${outfit.note}</p>
-        </div>
+        <div style="height:20px"></div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 
   dots.innerHTML = outfits.map((_, i) =>
     `<span class="carousel-dot ${i===0?'active':''}" onclick="goToSlide(${i})"></span>`
@@ -640,16 +722,6 @@ function renderCarousel() {
       currentSlide = newSlide;
       updateDots();
     }
-  });
-}
-
-function toggleOutfitView(idx, view) {
-  document.getElementById(`outfit-flatlay-${idx}`).style.display = view === 'flatlay' ? 'block' : 'none';
-  document.getElementById(`outfit-items-${idx}`).style.display = view === 'items' ? 'block' : 'none';
-  // Update toggle buttons
-  const slide = document.querySelectorAll('.carousel-slide')[idx];
-  slide.querySelectorAll('.view-toggle-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.trim().toLowerCase().replace(' ','') === view);
   });
 }
 
